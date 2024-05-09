@@ -1,7 +1,23 @@
 const AWS = require("../../config/aws");
 const { regionList } = require("../../config/RegionList");
+const ThrottleFixer = require("aws-throttle-fixer");
+const TF = new ThrottleFixer();
+const tfConfig = {
+    retryCount: 24,
+    //logger: console.log,
+    sdkVersion: 2,
+    exceptionCodes: ["RequestLimitExceeded"],
+    ignoreRetryState: true
+};
+TF.configure(tfConfig);
+const throttleFixFunction = TF.throttleFixer();
+var throttle = require('promise-ratelimit')(600); /* rateInMilliseconds */
 
-// const router = express.Router();
+let costexplorer = new AWS.CostExplorer();
+
+
+
+
 
 // Function to get details of EC2 instances in a specific region
 const describeInstance = async (region) => {
@@ -45,6 +61,34 @@ const s3BucketDetails = async () => {
         return { count: 0 };
     }
 };
+const getCostAndUsage = async () => {
+    try {
+        console.log("inside");
+        let params = {
+            Granularity: "MONTHLY",/*  */
+            Metrics: [ /*  */
+                //'BLENDED_COST',
+                //"UnblendedCost",
+                "UsageQuantity"
+
+            ],
+            TimePeriod: {
+                End: '2024-04-23', 
+                Start: '2024-03-23' 
+            },
+        }
+        //let response = await throttleFixFunction(resourcegroupstaggingapi, "tagResources", params)
+        let response =await throttleFixFunction(costexplorer,"getCostAndUsage",params)
+        return response
+       // console.log(response);
+    } 
+    catch (error) {
+        console.log(error);
+    }
+
+}
+
+module.exports.getCostAndUsage = getCostAndUsage
 
 module.exports.s3BucketDetails = s3BucketDetails
 module.exports.volumeDetails = volumeDetails
