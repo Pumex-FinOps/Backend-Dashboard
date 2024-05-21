@@ -61,32 +61,32 @@ const s3BucketDetails = async () => {
         return { count: 0 };
     }
 };
-const getCostAndUsage = async () => {
-    try {
-        console.log("inside");
-        let params = {
-            Granularity: "MONTHLY",/*  */
-            Metrics: [ /*  */
-                //'BLENDED_COST',
-                //"UnblendedCost",
-                "UsageQuantity"
 
-            ],
-            TimePeriod: {
-                End: '2024-04-23', 
-                Start: '2024-03-23' 
-            },
+const getCostAndUsage = async (filter) => {
+    console.log("Filter:", filter);
+
+    let params = {
+        Granularity: "MONTHLY",
+        Metrics: ["UnblendedCost"],
+        TimePeriod: {
+            End: '2024-05-23', 
+            Start: '2024-05-01' 
         }
-        //let response = await throttleFixFunction(resourcegroupstaggingapi, "tagResources", params)
-        let response =await throttleFixFunction(costexplorer,"getCostAndUsage",params)
-        return response
-       // console.log(response);
-    } 
-    catch (error) {
-        console.log(error);
+    };
+
+    if (filter && filter.Filter) {
+        params.Filter = filter.Filter;
     }
 
-}
+    try {
+        let response = await throttleFixFunction(costexplorer, "getCostAndUsage", params);
+        return response;
+    } 
+    catch (error) {
+        console.error("Error in getCostAndUsage:", error);
+        throw new Error("Error fetching cost and usage data");
+    }
+};
 
 module.exports.getCostAndUsage = getCostAndUsage
 
