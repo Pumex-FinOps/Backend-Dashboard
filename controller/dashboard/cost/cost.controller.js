@@ -1,6 +1,4 @@
-
-
-const { getCostAndUsage } = require("../AwsServices/services");
+const { getCostAndUsage } = require("./cost.services");
 
 const getCostForResource = async (resources) => {
     console.log("Resources:", resources);
