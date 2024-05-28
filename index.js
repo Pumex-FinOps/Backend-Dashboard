@@ -5,7 +5,6 @@ const bodyParser = require('body-parser');
 
 app.use(bodyParser.json());
 app.use(cors());
- // Enable CORS for all routes, you can configure it as needed
  const{resourceCount}=require("./controller/dashboard/resources/resources.controller")
  const{costdetails} =  require("./controller/dashboard/cost/cost.controller")
 

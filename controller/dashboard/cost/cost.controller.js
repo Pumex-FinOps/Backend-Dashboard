@@ -1,13 +1,14 @@
 const { getCostAndUsage } = require("./cost.services");
 
 const getCostForResource = async (resources) => {
-    console.log("Resources:", resources);
+    //console.log("Resources:", resources);
     return await getCostAndUsage({
         Filter: {
             Dimensions: {
                 Key: "SERVICE",
                 Values: resources
             }
+            
         }
     });
 };
@@ -58,6 +59,8 @@ const costdetails = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
+
+
 
 module.exports = { costdetails };
 
