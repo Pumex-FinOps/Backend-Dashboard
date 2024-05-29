@@ -22,8 +22,8 @@ const getCostAndUsage = async (filter) => {
         Granularity: "MONTHLY",
         Metrics: ["UnblendedCost"],
         TimePeriod: {
-            End: '2024-05-23', 
-            Start: '2024-05-01' 
+            End: '2024-05-29', 
+            Start: '2024-04-01' 
         }
     };
 
