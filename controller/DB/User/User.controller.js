@@ -1,9 +1,10 @@
 const { generateId, generatePassword, validateFields } = require("./Utiles")
 const {
-    putItem
+    putItem,
+    getItem
 } = require("./User.service")
-const login = async(req, res)=>{
-    
+const login = async (req, res) => {
+
 }
 const addNewUser = async (req, res) => {
     try {
@@ -60,5 +61,14 @@ const addNewUser = async (req, res) => {
 
 
 }
+const getUser = async () => {
+    try {
+        let response = await getItem()
+        console.log("response", response);
+    } catch (error) {
+
+    }
+}
 
 module.exports.addNewUser = addNewUser
+module.exports.getUser = getUser;

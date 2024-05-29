@@ -37,8 +37,8 @@ const putItem = async (item) => {
       "password": {
         S: item.password
       },
-      "image":{
-        s:item.image
+      "image": {
+        s: item.image
       },
     },
     TableName: "user"
@@ -52,6 +52,19 @@ const putItem = async (item) => {
     return error
   }
 }
+const getItem = async () => {
+  try {
+    var params = {
 
+      TableName: "user"
+    };
+    let response = await throttleFixFunction(dynamodb, "getItem", params);
+    return response
+  } catch (error) {
+    return error
+  }
+
+}
 
 module.exports.putItem = putItem
+module.exports.getItem = getItem
