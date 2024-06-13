@@ -1,5 +1,6 @@
 const {s3BucketDetails,volumeDetails,describeInstance}= require("./resources.services")
 const {regionList} = require("../../../config/RegionList")
+
 const resourceCount = async  (req, res) => {
     try {
         let ec2DetailsPromises = regionList.map(region => describeInstance(region));

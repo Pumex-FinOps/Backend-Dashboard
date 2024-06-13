@@ -8,6 +8,7 @@ app.use(cors());
 
 const multer = require('multer')
 const { resourceCount } = require("./controller/dashboard/resources/resources.controller")
+const { getTaggedResources } = require("./controller/dashboard/tagBasedResources/tagreport");
 const { addApplicationTeam } = require("./controller/DB/Team/Team.controller")
 const { costdetails } = require("./controller/dashboard/cost/cost.controller")
 const { addNewUser, getUser } = require("./controller/DB/User/User.controller")
@@ -19,6 +20,7 @@ const upload = multer({ storage: storage });
 
 app.get('/costdetails', costdetails)
 app.get('/resourceCount', resourceCount)
+app.get('/getTaggedResources', getTaggedResources);
 
 
 
