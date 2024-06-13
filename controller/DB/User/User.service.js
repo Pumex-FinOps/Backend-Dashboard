@@ -37,9 +37,7 @@ const putItem = async (item) => {
       "password": {
         S: item.password
       },
-      "image": {
-        s: item.image
-      },
+
     },
     TableName: "user"
   };
@@ -52,19 +50,37 @@ const putItem = async (item) => {
     return error
   }
 }
-const getItem = async () => {
+const getItem = async (team) => {
   try {
-    var params = {
-
+    console.log("teammmm", team);
+    const params = {
+      Key: {
+        'empId': { S: team.toString() } // Convert number to string for DynamoDB
+      },
       TableName: "user"
     };
-    let response = await throttleFixFunction(dynamodb, "getItem", params);
-    return response
-  } catch (error) {
-    return error
-  }
 
+    console.log("params", params);
+    const response = await throttleFixFunction(dynamodb, "getItem", params);
+    //console.log(response);
+    return response.Items ? response.Items.map(AWS.DynamoDB.Converter.unmarshall) : [];
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const getAllItem = async () => {
+  var params = {
+    TableName: "user"
+  };
+  try {
+    const response = await throttleFixFunction(dynamodb, "scan", params);
+    return response.Items ? response.Items.map(AWS.DynamoDB.Converter.unmarshall) : [];
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 module.exports.putItem = putItem
 module.exports.getItem = getItem
+module.exports.getAllItem = getAllItem
