@@ -1,27 +1,38 @@
 const AWS = require("./config/aws");
 
-let costExplorer = new AWS.CostExplorer();
+// Configure AWS SDK with your region
+AWS.config.update({ region: 'us-east-1' }); // Replace with your region
 
-const params = {
-    TimePeriod: {
-      Start: '2023-05-01', // The start date in YYYY-MM-DD format
-      End: '2023-05-31'    // The end date in YYYY-MM-DD format
-    },
-    Granularity: 'MONTHLY',
-    Metrics: ['UnblendedCost'],
-    // Filter: {
-    //   Tags: {
-    //     Key: 'ApplicationName', // Replace with your tag key
-    //     Values: ['FinOps'] // Replace with your tag values
-    //   }
-    // }
-  };
-  
-  // Call the GetCostAndUsage API
-  costExplorer.getCostAndUsage(params, (err, data) => {
-    if (err) {
-      console.error('Error:', err);
-    } else {
-      console.log('Cost and Usage Data:', JSON.stringify(data, null, 2));
+// Create Cost Explorer service object
+const ce = new AWS.CostExplorer();
+
+// Example function to get cost of specific resource by RESOURCE_ID
+async function getResourceCostByResourceId(resourceId) {
+    try {
+        const params = {
+            TimePeriod: {
+                Start: '2024-06-10', // Start date for cost analysis
+                End: '2024-06-19'    // End date for cost analysis
+            },
+            Granularity: 'MONTHLY',
+            Metrics: ['BlendedCost'],
+            Filter: {
+                Dimensions: {
+                    Key: 'RESOURCE_ID', // Filter by resource ID
+                    Values: [resourceId]
+                }
+            }
+        };
+
+        const data = await ce.getCostAndUsageWithResources(params).promise();
+        console.log(data); // Output the cost data (you may want to parse and process this)
+    } catch (err) {
+        console.error('Error retrieving cost:', err);
     }
-  });
+}
+
+// Example usage
+const resourceId = 'i-08f5fd623fe056e86'; // Replace with your resource ID
+getResourceCostByResourceId(resourceId);
+
+

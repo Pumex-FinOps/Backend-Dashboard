@@ -1,9 +1,9 @@
 const AWS = require("../../../config/aws");
 const { regionList } = require("../../../config/RegionList");
 
-
 const getTaggedResources = async (req, res) => {
     try {
+        const applicationName = req.params.applicationName || 'FinOps'; // Default to 'FinOps' if not provided
         let allResources = [];
 
         for (const region of regionList) {
@@ -15,7 +15,7 @@ const getTaggedResources = async (req, res) => {
                 TagFilters: [
                     {
                         Key: 'ApplicationName',
-                        Values: ['FinOps'],
+                        Values: [applicationName],
                     },
                 ],
             };

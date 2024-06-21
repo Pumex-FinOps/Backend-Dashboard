@@ -20,7 +20,7 @@ const upload = multer({ storage: storage });
 
 app.get('/costdetails', costdetails)
 app.get('/resourceCount', resourceCount)
-app.get('/getTaggedResources', getTaggedResources);
+app.get('/getTaggedResources/:applicationName', getTaggedResources);
 
 
 
