@@ -1,4 +1,4 @@
-const aws = require('../../config/aws')
+const aws = require('../../../config/aws')
 
 const s3 = new aws.S3()
 
