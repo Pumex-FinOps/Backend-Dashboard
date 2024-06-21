@@ -13,7 +13,7 @@ const { resourceCount } = require("./controller/dashboard/resources/resources.co
 const { getTaggedResources } = require("./controller/dashboard/tagBasedResources/tagreport");
 //const { addApplicationTeam } = require("./controller/DB/Team/Team.controller")
 const { costdetails } = require("./controller/dashboard/cost/cost.controller")
-const { userSignUp, getUserbyId, getAllUser } = require("./controller/DB/controller/user_controller")
+const { userSignUp, userLogIn, displayUser, getUser, deleteUsers } = require("./controller/DB/controller/user_controller")
 const { fileUpload } = require("./controller/DB/utils/file_upload")
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -31,6 +31,12 @@ app.post('/newuser', userSignUp)
 // app.get("/getalluser", getAllUser)
 
 
+app.post('/signup', userSignUp)
+app.post('/login', userLogIn)
+app.get('/users', displayUser)
+app.get('/users/:_id', getUser)
+//app.put('/users/:_id', updateUser)
+app.delete('/users/:_id', deleteUsers)
 
 
 
