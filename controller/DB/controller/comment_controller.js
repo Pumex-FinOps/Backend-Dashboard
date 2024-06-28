@@ -1,4 +1,4 @@
-const Comment = require('../models/Comment');
+const Comment = require('../model/commentSchema');
 
 // Function to create a new comment
 const createComment = async (req, res) => {
@@ -6,9 +6,16 @@ const createComment = async (req, res) => {
         const { userId, ticketId, comment } = req.body;
         const newComment = new Comment({ userId, ticketId, comment });
         const savedComment = await newComment.save();
-        res.status(201).json(savedComment);
+        
+        res.status(201).json({
+            message: 'Comment created successfully',
+            data: {
+                commentId: savedComment._id
+            }
+        });
     } catch (error) {
-        res.status(500).json({ error: `Could not create comment: ${error.message}` });
+        console.error('Error creating comment:', error);
+        res.status(500).json({ error: 'Could not create comment' });
     }
 };
 
@@ -21,7 +28,8 @@ const getCommentsByTicketId = async (req, res) => {
             .sort({ createdAt: -1 });
         res.json(comments);
     } catch (error) {
-        res.status(500).json({ error: `Could not fetch comments for ticket: ${error.message}` });
+        console.error('Error fetching comments by ticketId:', error);
+        res.status(500).json({ error: 'Could not fetch comments' });
     }
 };
 
@@ -34,7 +42,8 @@ const getCommentsByUserId = async (req, res) => {
             .sort({ createdAt: -1 });
         res.json(comments);
     } catch (error) {
-        res.status(500).json({ error: `Could not fetch comments for user: ${error.message}` });
+        console.error('Error fetching comments by userId:', error);
+        res.status(500).json({ error: 'Could not fetch comments' });
     }
 };
 
@@ -47,9 +56,13 @@ const updateComment = async (req, res) => {
         if (!updatedComment) {
             return res.status(404).json({ error: `Comment not found with ID: ${id}` });
         }
-        res.json(updatedComment);
+        res.json({
+            message: 'Comment updated successfully',
+            data: updatedComment
+        });
     } catch (error) {
-        res.status(500).json({ error: `Could not update comment: ${error.message}` });
+        console.error('Error updating comment:', error);
+        res.status(500).json({ error: 'Could not update comment' });
     }
 };
 
@@ -61,9 +74,13 @@ const deleteComment = async (req, res) => {
         if (!deletedComment) {
             return res.status(404).json({ error: `Comment not found with ID: ${id}` });
         }
-        res.json(deletedComment);
+        res.json({
+            message: 'Comment deleted successfully',
+            data: deletedComment
+        });
     } catch (error) {
-        res.status(500).json({ error: `Could not delete comment: ${error.message}` });
+        console.error('Error deleting comment:', error);
+        res.status(500).json({ error: 'Could not delete comment' });
     }
 };
 

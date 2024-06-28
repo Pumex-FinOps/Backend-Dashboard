@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const ticketSchema = new mongoose.Schema({
     userId: {
-        type: Schema.Types.ObjectId,
-        ref: 'User',
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Users',
         required: true
     },
     userEmail: {
@@ -17,13 +17,13 @@ const ticketSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    attachments: [String],  // Array of attachment URLs or file paths
+    attachments: [String],  
     teamId: {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Team',
     },
     assignedMember: {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
     },
     priority: {
@@ -37,10 +37,9 @@ const ticketSchema = new mongoose.Schema({
         default: 'Open'
     }
 }, {
-    timestamps: true  // Adds createdAt and updatedAt automatically
+    timestamps: true  
 });
 
-// Create Ticket model
 const Ticket = mongoose.model('Ticket', ticketSchema);
 
 module.exports = Ticket;

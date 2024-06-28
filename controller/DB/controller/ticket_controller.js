@@ -1,11 +1,14 @@
-const Ticket = require('../models/Ticket');
+const Ticket = require('../model/ticketSchema');
 
 // Function to create a new ticket
 const createTicket = async (req, res) => {
     try {
         const ticket = new Ticket(req.body);
         const savedTicket = await ticket.save();
-        res.status(201).json(savedTicket);
+        res.status(201).json({
+            message: 'Ticket created successfully',
+            data: savedTicket
+        });
     } catch (error) {
         res.status(400).json({ error: `Could not create ticket: ${error.message}` });
     }
@@ -14,7 +17,15 @@ const createTicket = async (req, res) => {
 // Function to fetch all tickets
 const getAllTickets = async (req, res) => {
     try {
-        const tickets = await Ticket.find().sort({ createdAt: -1 });
+        let query = {}; // Default query to fetch all tickets
+
+        const { status } = req.query;
+        if (status) {
+            // If status parameter is provided, filter by status
+            query.status = status;
+        }
+
+        const tickets = await Ticket.find(query).sort({ createdAt: -1 });
         res.json(tickets);
     } catch (error) {
         res.status(500).json({ error: `Could not fetch tickets: ${error.message}` });
@@ -44,7 +55,10 @@ const updateTicket = async (req, res) => {
         if (!updatedTicket) {
             return res.status(404).json({ error: `Ticket not found with ID: ${ticketId}` });
         }
-        res.json(updatedTicket);
+        res.json({
+            message: 'Ticket updated successfully',
+            data: updatedTicket
+        });
     } catch (error) {
         res.status(500).json({ error: `Could not update ticket: ${error.message}` });
     }
@@ -58,7 +72,10 @@ const deleteTicket = async (req, res) => {
         if (!deletedTicket) {
             return res.status(404).json({ error: `Ticket not found with ID: ${ticketId}` });
         }
-        res.json(deletedTicket);
+        res.json({
+            message: 'Ticket deleted successfully',
+            data: deletedTicket
+        });
     } catch (error) {
         res.status(500).json({ error: `Could not delete ticket: ${error.message}` });
     }
@@ -69,7 +86,7 @@ const getTicketsByAssignedMember = async (req, res) => {
     const memberId = req.params.memberId;
     try {
         const tickets = await Ticket.find({ assignedMember: memberId })
-            .populate('userId', 'name email')
+            .populate('userId', 'name')
             .sort({ createdAt: -1 });
         res.json(tickets);
     } catch (error) {

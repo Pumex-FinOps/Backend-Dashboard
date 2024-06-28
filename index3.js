@@ -15,6 +15,7 @@ const { getTaggedResources } = require("./controller/dashboard/tagBasedResources
 const { costdetails } = require("./controller/dashboard/cost/cost.controller")
 const { userSignUp, userLogIn, displayUser, getUser, deleteUsers } = require("./controller/DB/controller/user_controller")
 const ticketController = require("./controller/DB/controller/ticket_controller")
+const commentController = require("./controller/DB/controller/comment_controller")
 const { fileUpload } = require("./controller/DB/utils/file_upload")
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -52,11 +53,11 @@ app.get('/tickets/assigned-to-user/:userId', ticketController.getTicketsByUserId
 
 
 
-app.post('/comments', createComment);
-app.get('/comments/ticket/:ticketId', getCommentsByTicketId);
-app.get('/comments/user/:userId', getCommentsByUserId);
-app.put('/comments/:id', updateComment);
-app.delete('/comments/:id', deleteComment);
+app.post('/comments', commentController.createComment);
+app.get('/comments/ticket/:ticketId', commentController.getCommentsByTicketId);
+app.get('/comments/user/:userId', commentController.getCommentsByUserId);
+app.put('/comments/:id', commentController.updateComment);
+app.delete('/comments/:id', commentController.deleteComment);
 
 // app.post("/upload", upload.single('file'), fileUpload)
 
