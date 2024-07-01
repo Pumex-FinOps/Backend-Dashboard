@@ -48,4 +48,62 @@ const applicationSignup = async (request, response) => {
     }
 }
 
-module.exports = { applicationSignup };
+const displayTeam = async (request, response) => {
+
+    try {
+        const display = await Team.find();
+        response.status(201).json({
+            message: "Team data",
+            data: {
+                data: display
+            }
+        });
+
+    } catch (error) {
+        console.log(error);
+        console.log(error);
+        response.status(500).json({ message: 'Error while display' });
+    }
+
+
+}
+
+const deleteTeam= async (req, res) => {
+
+    const userId = req.params._id;
+    try {
+        const deletedUser = await User.findByIdAndDelete(userId);
+
+        if (!deletedUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json({ message: 'User deleted successfully', deletedUser });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+
+}
+
+const getTeam = async (request, response) => {
+    try {
+        const display = await User.findOne({ _id: request.params._id });
+        // console.log(request.params._id)
+
+        if (display) {
+            response.status(200).json({
+                data:
+                    { data: display }
+            });
+        } else {
+            response.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+
+        console.error(error);
+        response.status(500).json({ message: 'Error while fetching user' });
+    }
+}
+
+module.exports = { applicationSignup,displayTeam,getTeam,deleteTeam };

@@ -10,12 +10,15 @@ app.use(cors());
 
 const multer = require('multer')
 
-const { applicationSignup} = require("./controller/DB/controller/application_Controller")
+const { applicationSignup,displayTeam,getTeam,deleteTeam} = require("./controller/DB/controller/application_Controller")
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 
-app.post('/addApplicationTeam', applicationSignup)
+app.post('/login', applicationSignup)
+app.get('/teams',displayTeam)  
+app.delete('/teams/:_id',deleteTeam)
+app.get('/teams/:_id',getTeam)
 
 // app.get("/getuser/:empId", getUserbyId)
 // app.get("/getalluser", getAllUser)
