@@ -12,11 +12,8 @@ const tfConfig = {
 TF.configure(tfConfig);
 const throttleFixFunction = TF.throttleFixer();
 var throttle = require('promise-ratelimit')(600); /* rateInMilliseconds */
+
 // Function to get details of EC2 instances in a specific region
-
-
-
-
 const describeInstance = async (region) => {
     let ec2 = new AWS.EC2({ region: region });
     let result = await ec2.describeInstances().promise();
@@ -59,8 +56,40 @@ const s3BucketDetails = async () => {
     }
 };
 
+// Function to get details of Lambda functions in a specific region
+const lambdaDetails = async (region) => {
+    let lambda = new AWS.Lambda({ region: region });
+    let result = await lambda.listFunctions().promise();
+    let arns = [];
 
+    for (let func of result.Functions) {
+        let accountId = '233425133219'; // Assuming you have the account ID configured
+        let arn = `arn:aws:lambda:${region}:${accountId}:function:${func.FunctionName}`;
+        arns.push(arn);
+    }
 
-module.exports.s3BucketDetails = s3BucketDetails
-module.exports.volumeDetails = volumeDetails
-module.exports.describeInstance = describeInstance
+    return { count: arns.length, arns: arns };
+};
+
+// Function to get details of CloudWatch log groups in a specific region
+const cloudWatchLogDetails = async (region) => {
+    let cloudwatchlogs = new AWS.CloudWatchLogs({ region: region });
+    let result = await cloudwatchlogs.describeLogGroups().promise();
+    let arns = [];
+
+    for (let logGroup of result.logGroups) {
+        let accountId = '233425133219'; // Assuming you have the account ID configured
+        let arn = `arn:aws:logs:${region}:${accountId}:log-group:${logGroup.logGroupName}`;
+        arns.push(arn);
+    }
+
+    return { count: arns.length, arns: arns };
+};
+
+module.exports = {
+    describeInstance,
+    volumeDetails,
+    s3BucketDetails,
+    lambdaDetails,
+    cloudWatchLogDetails
+};
