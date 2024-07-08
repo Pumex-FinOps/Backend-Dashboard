@@ -151,34 +151,34 @@ async function getCostOfAllResources() {
             });
         });
 
-        // Fetch EBS volumes
-        const ebsData = await ec2.describeVolumes().promise();
-        const volumes = ebsData.Volumes.map(volume => ({
-            ResourceId: volume.VolumeId,
-            Tags: volume.Tags
+        // // Fetch EBS volumes
+        // const ebsData = await ec2.describeVolumes().promise();
+        // const volumes = ebsData.Volumes.map(volume => ({
+        //     ResourceId: volume.VolumeId,
+        //     Tags: volume.Tags
         
-        }));
-        volumes.forEach(volume => {
-            console.log(`Tags for Volume ${volume.ResourceId}:`, volume.Tags);
-        });
+        // }));
+        // volumes.forEach(volume => {
+        //     console.log(`Tags for Volume ${volume.ResourceId}:`, volume.Tags);
+        // });
 
         // Fetch S3 buckets
-        const s3Buckets = await s3.listBuckets().promise();
-        const buckets = [];
-        for (const bucket of s3Buckets.Buckets) {
-            try {
-                const taggingData = await s3.getBucketTagging({ Bucket: bucket.Name }).promise();
-                buckets.push({
-                    ResourceId: bucket.Name,
-                    Tags: taggingData.TagSet
-                });
-            } catch (err) {
-                // Handle buckets without tags or insufficient permissions gracefully
-                if (err.code !== 'NoSuchTagSet') {
-                    console.error(`Error fetching tags for S3 bucket ${bucket.Name}:`, err);
-                }
-            }
-        }
+        // const s3Buckets = await s3.listBuckets().promise();
+        // const buckets = [];
+        // for (const bucket of s3Buckets.Buckets) {
+        //     try {
+        //         const taggingData = await s3.getBucketTagging({ Bucket: bucket.Name }).promise();
+        //         buckets.push({
+        //             ResourceId: bucket.Name,
+        //             Tags: taggingData.TagSet
+        //         });
+        //     } catch (err) {
+        //         // Handle buckets without tags or insufficient permissions gracefully
+        //         if (err.code !== 'NoSuchTagSet') {
+        //             console.error(`Error fetching tags for S3 bucket ${bucket.Name}:`, err);
+        //         }
+        //     }
+        // }
 
         // // Fetch Lambda functions
         // const lambdaFunctions = await lambda.listFunctions().promise();
@@ -192,13 +192,13 @@ async function getCostOfAllResources() {
         // }
 
         // const resources = [...instances, ...volumes, ...buckets, ...functions];
-        const resources = [...instances, ...volumes,...buckets];
+        const resources = [...instances];
 
 
         const services = [
-            { service: 'Amazon Elastic Compute Cloud - Compute', key: 'EC2' },
-            { service: 'Amazon Elastic Block Store', key: 'EBS' },
-            { service: 'Amazon Simple Storage Service', key: 'S3' },
+            { service: 'Amazon Elastic Compute Cloud - Compute', key: 'EC2' }
+            // { service: 'Amazon Elastic Block Store', key: 'EBS' }
+            // { service: 'Amazon Simple Storage Service', key: 'S3' },
             // { service: 'AWS Lambda', key: 'Lambda' }
         ];
 

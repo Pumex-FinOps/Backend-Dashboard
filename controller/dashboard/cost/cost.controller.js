@@ -10,7 +10,7 @@ const getCostForResource = async (resources, startDate, endDate) => {
     });
 };
 
-const costdetails = async (req, res) => {
+const costdetails = async (req, res = null) => {
     try {
         let today = new Date();
         let CustomstartDate = req.body.startDate ? new Date(req.body.startDate) : new Date(today.getFullYear(), 0, 1);
@@ -80,7 +80,7 @@ const costdetails = async (req, res) => {
         const formattedS3CustomPeriodCost = sumMonthlyCosts(s3CustomPeriodCostResponse);
         const formattedLambdaCustomPeriodCost = sumMonthlyCosts(lambdaCustomPeriodCostResponse);  // New Lambda calculation
 
-        res.json({
+        let result ={
             Yearly: {
                 TimePeriod: {
                     Start: startOfYear,
@@ -121,7 +121,12 @@ const costdetails = async (req, res) => {
                 S3: formattedS3CustomPeriodCost,
                 Lambda: formattedLambdaCustomPeriodCost  // Include Lambda in response
             }
-        });
+        };
+        if (res) {
+            res.json(result)
+        } else {
+            return result;
+        }
     } catch (error) {
         console.error("Error in costdetails:", error);
         res.status(500).json({ error: "Internal Server Error" });
