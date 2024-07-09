@@ -7,7 +7,7 @@ secretKey = process.env.secretKey
 
 const userLogIn = async (req, res) => {
     console.log("Welcome");
-    const { usernameOrEmail, password } = req.body;
+    const { usernameOrEmail, Password} = req.body;
     try {
         console.log(req.body);
         // Check if user exists with username or email
@@ -17,8 +17,12 @@ const userLogIn = async (req, res) => {
                 { email: usernameOrEmail }
             ]
         });
+        console.log(Password);
+        console.log(user.password);
+
         if (user) {
-            const isPasswordValid = await bcrypt.compare(password, user.password);
+            const isPasswordValid = await bcrypt.compare(Password, user.password);
+            console.log(isPasswordValid);
 
             if (isPasswordValid) {
                 const token = jwt.sign({ userId: user._id, accessLevel: user.accessLevel, name: user.userName }, secretKey, { expiresIn: '1h' });
