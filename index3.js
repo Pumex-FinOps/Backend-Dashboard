@@ -16,6 +16,7 @@ const { costdetails } = require("./controller/dashboard/cost/cost.controller")
 const { userSignUp, userLogIn, displayUser, getUser, deleteUsers } = require("./controller/DB/controller/user_controller")
 const ticketController = require("./controller/DB/controller/ticket_controller")
 const commentController = require("./controller/DB/controller/comment_controller")
+const costcontroller = require("./controller/DB/controller/cost_controller")
 const { fileUpload } = require("./controller/DB/utils/file_upload")
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -61,7 +62,7 @@ app.delete('/comments/:id', commentController.deleteComment);
 
 // app.post("/upload", upload.single('file'), fileUpload)
 
-
+app.get("/getAndSaveAwsCost", costcontroller.getAndSaveAwsCost)
 
 
 

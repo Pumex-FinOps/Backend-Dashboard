@@ -23,6 +23,7 @@ const userLogIn = async (req, res) => {
                 return res.status(200).json({
                     message: `${user.userName} login successful`,
                     token: token,
+                    accessLevel: user.accessLevel,
                     uId: user._id,
                     data: {
                         email: user.email
@@ -77,7 +78,9 @@ const userSignUp = async (req, res) => {
                 message: 'User registered successfully',
                 data: {
                     username: username,
-                    email: email
+                    email: email,
+                    password: password
+
                 }
             });
         }

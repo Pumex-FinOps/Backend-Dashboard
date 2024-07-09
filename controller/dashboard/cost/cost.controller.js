@@ -10,7 +10,7 @@ const getCostForResource = async (resources, startDate, endDate) => {
     });
 };
 
-const costdetails = async (req, res = null) => {
+const costdetails = async (req, res) => {
     try {
         let today = new Date();
         let CustomstartDate = req.body.startDate ? new Date(req.body.startDate) : new Date(today.getFullYear(), 0, 1);
@@ -80,7 +80,7 @@ const costdetails = async (req, res = null) => {
         const formattedS3CustomPeriodCost = sumMonthlyCosts(s3CustomPeriodCostResponse);
         const formattedLambdaCustomPeriodCost = sumMonthlyCosts(lambdaCustomPeriodCostResponse);  // New Lambda calculation
 
-        let result ={
+        let result = {
             Yearly: {
                 TimePeriod: {
                     Start: startOfYear,

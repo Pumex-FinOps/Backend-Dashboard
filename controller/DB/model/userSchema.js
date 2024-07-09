@@ -16,17 +16,9 @@ const userSchema = new mongoose.Schema({
         lowercase: true,
         max: 20
     },
-    userId: {
-        type: Number,
-        required: true,
-        trim: true,
-        unique: true,
-        index: true,
-        lowercase: true
-    },
     managerName: {
         type: String,
-        required: true,
+        // required: true,
         trim: true,
         max: 20
     },
@@ -55,12 +47,12 @@ const userSchema = new mongoose.Schema({
     },
     accessLevel: {
         type: String,
-        enum: ['managementView', 'teamView', 'adminView'],
+        enum: ['Management Level', 'Engineer Level', 'Admin Level'],
         required: true
     },
     userType: {
         type: String,
-        enum: ['Full Time', 'Contractors', 'Intern'],
+        enum: ['Full time', 'Intern', 'Contractors'],
         required: true
     },
     userImage: { type: String }

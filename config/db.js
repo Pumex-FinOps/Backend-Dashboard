@@ -4,8 +4,8 @@ dotenv.config();
 const username = process.env.DB_USERNAME
 const password = process.env.DB_PASSWORD
 
-//const dbURI = `mongodb+srv://${username}:${password}@cluster0.08tziw5.mongodb.net/Clouddashboard`
-const dbURI = "mongodb://ec2-52-23-239-155.compute-1.amazonaws.com:27017/Clouddashboard"
+const dbURI = `mongodb+srv://${username}:${password}@cluster0.08tziw5.mongodb.net/Clouddashboard`
+//const dbURI = "mongodb://ec2-52-23-239-155.compute-1.amazonaws.com:27017/Clouddashboard"
 
 
 mongoose.connect(dbURI, {
