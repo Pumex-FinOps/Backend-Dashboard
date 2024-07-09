@@ -1,7 +1,9 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const User = require('../model/userSchema');
 const { sendEmail } = require('../utils/mail_controller');
 const { generateRandomString, generateUniqueUsername } = require('../utils/generators');
+secretKey = process.env.secretKey
 
 const userLogIn = async (req, res) => {
     console.log("Welcome");
@@ -19,7 +21,7 @@ const userLogIn = async (req, res) => {
             const isPasswordValid = await bcrypt.compare(password, user.password);
 
             if (isPasswordValid) {
-                const token = jwt.sign({ userId: user._id, accessLevel: user.accessLevel, name: userName }, secretKey, { expiresIn: '1h' });
+                const token = jwt.sign({ userId: user._id, accessLevel: user.accessLevel, name: user.userName }, secretKey, { expiresIn: '1h' });
                 return res.status(200).json({
                     message: `${user.userName} login successful`,
                     token: token,
