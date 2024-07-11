@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const Team = require('../model/applicationSchema');
+const User = require('../model/userSchema');
 
 const applicationSignup = async (request, response) => {
     try {
@@ -21,12 +22,12 @@ const applicationSignup = async (request, response) => {
             }
 
         }
-        
+
         else {
-            
+
             const application = {
                 ...request.body,
-                
+
             };
 
             const newApplication = new Team(application);
@@ -38,7 +39,7 @@ const applicationSignup = async (request, response) => {
                 message: 'New team created successfully',
                 data: {
                     teamName: application.teamName
-                    
+
                 }
             });
         }
@@ -68,7 +69,7 @@ const displayTeam = async (request, response) => {
 
 }
 
-const deleteTeam= async (req, res) => {
+const deleteTeam = async (req, res) => {
 
     const userId = req.params._id;
     try {
@@ -87,8 +88,10 @@ const deleteTeam= async (req, res) => {
 }
 
 const getTeam = async (request, response) => {
+    console.log("request.params._id", request.params._id);
     try {
-        const display = await User.findOne({ _id: request.params._id });
+        const display = await Team.findOne({ _id: request.params._id }).populate(
+            "teamMembers")
         // console.log(request.params._id)
 
         if (display) {
@@ -97,13 +100,13 @@ const getTeam = async (request, response) => {
                     { data: display }
             });
         } else {
-            response.status(404).json({ message: 'User not found' });
+            response.status(404).json({ message: 'team not found' });
         }
     } catch (error) {
 
         console.error(error);
-        response.status(500).json({ message: 'Error while fetching user' });
+        response.status(500).json({ message: 'Error while fetching team' });
     }
 }
 
-module.exports = { applicationSignup,displayTeam,getTeam,deleteTeam };
+module.exports = { applicationSignup, displayTeam, getTeam, deleteTeam };

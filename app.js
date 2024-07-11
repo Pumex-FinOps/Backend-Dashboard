@@ -17,15 +17,19 @@ const { userSignUp, userLogIn, displayUser, getUser, deleteUsers } = require("./
 const ticketController = require("./controller/DB/controller/ticket_controller")
 const commentController = require("./controller/DB/controller/comment_controller")
 const costcontroller = require("./controller/DB/controller/cost_controller")
+const {getCostOfAllResources} = require('./controller/dashboard/resourseLevelCost/resourcelevelcost.controller');
+
 const { fileUpload } = require("./controller/DB/utils/file_upload")
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 
 
+
 app.get('/costdetails', costdetails)
 app.get('/resourceCount', resourceCount)
 app.get('/getTaggedResources', getTaggedResources);
+app.get('/resourceLevelCost',getCostOfAllResources)
 
 
 
@@ -63,7 +67,7 @@ app.get("/getAndSaveAwsCost", costcontroller.getAndSaveAwsCost)
 
 
 
-app.post('/login', applicationSignup)
+app.post('/teams', applicationSignup)
 app.get('/teams',displayTeam)  
 app.delete('/teams/:_id',deleteTeam)
 app.get('/teams/:_id',getTeam)
