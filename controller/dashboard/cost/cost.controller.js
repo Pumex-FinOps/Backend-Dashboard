@@ -12,9 +12,11 @@ const getCostForResource = async (resources, startDate, endDate) => {
 
 const costdetails = async (req, res) => {
     try {
+        console.log("costdetails.....");
+        //console.log("body", req.body);
         let today = new Date();
-        let CustomstartDate = req.body.startDate ? new Date(req.body.startDate) : new Date(today.getFullYear(), 0, 1);
-        let CustomendDate = req.body.endDate ? new Date(req.body.endDate) : today;
+        let CustomstartDate = req?.body?.startDate ? new Date(req.body.startDate) : new Date(today.getFullYear(), 0, 1);
+        let CustomendDate = req?.body?.endDate ? new Date(req.body.endDate) : today;
 
         // Calculate date ranges
         let firstDayOfCurrentYear = new Date(today.getFullYear(), 0, 1);
@@ -122,14 +124,13 @@ const costdetails = async (req, res) => {
                 Lambda: formattedLambdaCustomPeriodCost  // Include Lambda in response
             }
         };
-        if (res) {
-            res.json(result)
-        } else {
-            return result;
-        }
+        //console.log("result", result);
+        return result
+        //res.json(result)
+
     } catch (error) {
         console.error("Error in costdetails:", error);
-        res.status(500).json({ error: "Internal Server Error" });
+        //res.status(500).json({ error: "Internal Server Error" });
     }
 };
 

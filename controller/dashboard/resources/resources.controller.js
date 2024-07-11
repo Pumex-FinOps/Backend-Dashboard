@@ -27,7 +27,7 @@ const resourceCount = async (req, res) => {
         let lambdaArnsByRegion = Object.fromEntries(lambdaResults.map((result, index) => [regionList[index], result.arns]));
         let cloudWatchLogArnsByRegion = Object.fromEntries(cloudWatchLogResults.map((result, index) => [regionList[index], result.arns]));
 
-        res.json({
+        return({
             ec2: { totalCount: ec2TotalCount, arnsByRegion: ec2ArnsByRegion },
             ebs: { totalCount: ebsTotalCount, arnsByRegion: ebsArnsByRegion },
             s3: { totalCount: s3TotalCount },
@@ -36,7 +36,7 @@ const resourceCount = async (req, res) => {
             total: ec2TotalCount + ebsTotalCount + s3TotalCount + lambdaTotalCount + cloudWatchLogTotalCount
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        //res.status(500).json({ error: err.message });
     }
 };
 
