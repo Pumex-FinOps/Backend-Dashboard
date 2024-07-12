@@ -36,10 +36,10 @@ const userSchema = new mongoose.Schema({
         max: 20
     },
     team: {
-        type: String,
-        //required: true,
-        trim: true,
-        max: 20
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Team',
+        default: null 
+
     },
     password: {
         type: String,

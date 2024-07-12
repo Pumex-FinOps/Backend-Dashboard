@@ -1,13 +1,14 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../model/userSchema');
+const Team = require('../model/applicationSchema')
 const { sendEmail } = require('../utils/mail_controller');
 const { generateRandomString, generateUniqueUsername } = require('../utils/generators');
 secretKey = process.env.secretKey
 
 const userLogIn = async (req, res) => {
     console.log("Welcome");
-    const { usernameOrEmail, Password} = req.body;
+    const { usernameOrEmail, Password } = req.body;
     try {
         console.log(req.body);
         // Check if user exists with username or email
@@ -53,52 +54,88 @@ const userSignUp = async (req, res) => {
         console.log("inside the signUp page");
         console.log(req.body);
 
-        const email = req.body.email;
+        const { email, teamName } = req.body;
         const username = await generateUniqueUsername(email, User);
 
-        const exist = await User.findOne({
-            email: email
-        });
+        const exist = await User.findOne({ email });
 
         if (exist) {
-            if (exist.email === email) {
-                return res.status(401).json({ message: 'Email already exists' });
+            return res.status(401).json({ message: 'Email already exists' });
+        }
+
+        const password = generateRandomString(12); // Generate random password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const user = {
+            ...req.body,
+            userName: username,
+            password: hashedPassword
+        };
+
+        if (teamName) {
+            // Find the team by team name
+            const team = await Team.findOne({ teamName });
+
+            if (team) {
+                // Initialize teamMembers array if it's null
+                if (!team.teamMembers) {
+                    team.teamMembers = [];
+                }
+                const newUser = new User(user);
+                newUser.team = team._id;
+                await newUser.save();
+                team.teamMembers.push(newUser._id);
+                await team.save();
+
+                //const newUser = new User(user);
+                // newUser.team = team._id;
+                // await newUser.save();
+
+                console.log(newUser);
+
+                // Uncomment the line below to send an email with user ID and password
+                // await sendEmail(email, username, password);
+
+                return res.status(200).json({
+                    message: 'User registered successfully',
+                    data: {
+                        username,
+                        email,
+                        password
+                    }
+                });
+            } else {
+                console.error(`Team ${teamName} not found`);
+                return res.status(404).json({ message: `Team ${teamName} not found` });
             }
         } else {
-            const password = generateRandomString(12); // Generate random password
-            const hashedPassword = await bcrypt.hash(password, 10);
-
-            const user = {
-                ...req.body,
-                userName: username,
-                password: hashedPassword
-            };
-
             const newUser = new User(user);
             await newUser.save();
+
             console.log(newUser);
 
-            //await sendEmail(email, username, password); // Send email with user ID and password
+            // Uncomment the line below to send an email with user ID and password
+            // await sendEmail(email, username, password);
 
-            res.status(200).json({
+            return res.status(200).json({
                 message: 'User registered successfully',
                 data: {
-                    username: username,
-                    email: email,
-                    password: password
-
+                    username,
+                    email,
+                    password
                 }
             });
         }
     } catch (error) {
         console.log(error);
-        res.status(500).json({ message: error });
+        res.status(500).json({ message: error.message });
     }
 };
 
+
 const displayUser = async (req, res) => {
     try {
-        const display = await User.find();
+        const display = await User.find().populate("team")
         res.status(200).json({
             message: "Users data",
             data: display
@@ -111,7 +148,7 @@ const displayUser = async (req, res) => {
 
 const getUser = async (req, res) => {
     try {
-        const display = await User.findOne({ _id: req.params._id });
+        const display = await User.findOne({ _id: req.params._id }).populate("team")
         if (display) {
             res.status(200).json({
                 data: display
@@ -138,5 +175,11 @@ const deleteUsers = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
+
+
+
+
+
 
 module.exports = { userSignUp, displayUser, userLogIn, getUser, deleteUsers };
