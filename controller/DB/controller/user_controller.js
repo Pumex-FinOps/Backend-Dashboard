@@ -73,7 +73,6 @@ const userSignUp = async (req, res) => {
         };
 
         if (teamName) {
-            // Find the team by team name
             const team = await Team.findOne({ teamName });
 
             if (team) {
