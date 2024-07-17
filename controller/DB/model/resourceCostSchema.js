@@ -2,9 +2,9 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const costSchema = new Schema({
+const resourceCostSchema = new Schema({
     data: {
-        type: Schema.Types.Mixed, 
+        type: Schema.Types.Mixed,
         required: true
     },
     createdAt: {
@@ -13,6 +13,6 @@ const costSchema = new Schema({
     }
 });
 
-const Cost = mongoose.model('Cost', costSchema);
+const ResourceCost = mongoose.model('ResourceCosts', resourceCostSchema);
 
-module.exports = Cost;
+module.exports = ResourceCost;

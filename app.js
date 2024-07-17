@@ -9,14 +9,15 @@ app.use(bodyParser.json());
 app.use(cors());
 
 const multer = require('multer')
-const { applicationSignup, displayTeam, getTeam, deleteTeam  } = require("./controller/DB/controller/application_Controller")
+const { applicationSignup, displayTeam, getTeam, deleteTeam } = require("./controller/DB/controller/application_Controller")
 const { resourceCount } = require("./controller/dashboard/resources/resources.controller")
 const { getTaggedResources } = require("./controller/dashboard/tagBasedResources/tagreport");
 const { costdetails } = require("./controller/dashboard/cost/cost.controller")
-const { userSignUp, userLogIn, displayUser, getUser, deleteUsers , } = require("./controller/DB/controller/user_controller")
+const { userSignUp, userLogIn, displayUser, getUser, deleteUsers, } = require("./controller/DB/controller/user_controller")
 const ticketController = require("./controller/DB/controller/ticket_controller")
 const commentController = require("./controller/DB/controller/comment_controller")
 const costcontroller = require("./controller/DB/controller/cost_controller")
+const resourceCostConttoller = require("./controller/DB/controller/resourceCost_controller")
 const { getCostOfAllResources } = require('./controller/dashboard/resourseLevelCost/resourcelevelcost.controller');
 
 
@@ -66,6 +67,8 @@ app.post("/upload", upload.single('file'), fileUpload)
 app.get("/getAndSaveAwsCost", costcontroller.getAndSaveAwsCost)
 app.get("/updateAwsCost", costcontroller.updateAwsCost)
 app.get("/costs", costcontroller.displayCost)
+app.get("/costbyresource", resourceCostConttoller.updateResourceLevelCost)
+app.get("/getcostbyresource",resourceCostConttoller.displayResourceLevelCost)
 
 
 
@@ -74,6 +77,7 @@ app.post('/teams', applicationSignup)
 app.get('/teams', displayTeam)
 app.delete('/teams/:_id', deleteTeam)
 app.get('/teams/:_id', getTeam)
+
 
 
 app.listen(5000, () => {
