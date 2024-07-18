@@ -11,7 +11,6 @@ const userLogIn = async (req, res) => {
     const { usernameOrEmail, Password } = req.body;
     try {
         console.log(req.body);
-        // Check if user exists with username or email
         const user = await User.findOne({
             $or: [
                 { userName: usernameOrEmail },
@@ -76,7 +75,6 @@ const userSignUp = async (req, res) => {
             const team = await Team.findOne({ teamName });
 
             if (team) {
-                // Initialize teamMembers array if it's null
                 if (!team.teamMembers) {
                     team.teamMembers = [];
                 }
@@ -85,9 +83,6 @@ const userSignUp = async (req, res) => {
                 await newUser.save();
                 team.teamMembers.push(newUser._id);
                 await team.save();
-
-                //const newUser = new User(user);
-                // newUser.team = team._id;
                 // await newUser.save();
 
                 console.log(newUser);
@@ -168,12 +163,21 @@ const deleteUsers = async (req, res) => {
         if (!deletedUser) {
             return res.status(404).json({ message: 'User not found' });
         }
-        res.status(200).json({ message: 'User deleted successfully', deletedUser });
+
+        const teams = await Team.updateMany(
+            { teamMembers: userId },
+            { $pull: { teamMembers: userId } }
+        );
+
+        res.status(200).json({
+            message: 'User deleted successfully and removed from teams',
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
 
 
 
