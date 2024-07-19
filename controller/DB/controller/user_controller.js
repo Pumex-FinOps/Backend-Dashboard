@@ -92,7 +92,7 @@ const userSignUp = async (req, res) => {
                 console.log(newUser);
 
                 // Uncomment the line below to send an email with user ID and password
-                await sendEmail(email, username, password);
+                // await sendEmail(email, username, password);
 
                 return res.status(200).json({
                     message: 'User registered successfully',
@@ -112,8 +112,7 @@ const userSignUp = async (req, res) => {
 
             console.log(newUser);
 
-            // Uncomment the line below to send an email with user ID and password
-            await sendEmail(email, username, password);
+            // await sendEmail(email, username, password);
 
             return res.status(200).json({
                 message: 'User registered successfully',
@@ -129,8 +128,6 @@ const userSignUp = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-
-
 const displayUser = async (req, res) => {
     try {
         const display = await User.find().populate("team")
