@@ -5,6 +5,10 @@ const Team = require('../model/applicationSchema')
 const { sendEmail } = require('../utils/mail_controller');
 const { generateRandomString, generateUniqueUsername } = require('../utils/generators');
 secretKey = process.env.secretKey
+const removeSensitiveFields = (obj) => {
+    const { password, accessLevel, ...cleanedObj } = obj;
+    return cleanedObj;
+};
 
 const userLogIn = async (req, res) => {
     console.log("Welcome");
@@ -130,9 +134,10 @@ const userSignUp = async (req, res) => {
 const displayUser = async (req, res) => {
     try {
         const display = await User.find().populate("team")
+        const cleanedUsers = display.map(user => removeSensitiveFields(user.toObject()))
         res.status(200).json({
             message: "Users data",
-            data: display
+            data: cleanedUsers
         });
     } catch (error) {
         console.log(error);
@@ -143,9 +148,10 @@ const displayUser = async (req, res) => {
 const getUser = async (req, res) => {
     try {
         const display = await User.findOne({ _id: req.params._id }).populate("team")
-        if (display) {
+        const cleanedUsers = display.map(user => removeSensitiveFields(user.toObject()))
+        if (cleanedUsers) {
             res.status(200).json({
-                data: display
+                data: cleanedUsers
             });
         } else {
             res.status(404).json({ message: 'User not found' });
@@ -178,6 +184,64 @@ const deleteUsers = async (req, res) => {
     }
 };
 
+const updateUser = async (req, res) => {
+    try {
+        // console.log("inside the updateUser function");
+        // console.log(req.body);
+
+        const userId = req.params._id;
+        const { teamName, ...otherFields } = req.body;
+
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Update other fields (excluding email, username, and password)
+        Object.assign(user, otherFields);
+
+        // Update team if teamName is provided and different from the current team
+        if (teamName) {
+            const team = await Team.findOne({ teamName });
+
+            if (!team) {
+                return res.status(404).json({ message: `Team ${teamName} not found` });
+            }
+
+            // Remove user from the old team if it exists
+            if (user.team) {
+                const oldTeam = await Team.findById(user.team);
+                oldTeam.teamMembers = oldTeam.teamMembers.filter(member => member.toString() !== userId);
+                await oldTeam.save();
+            }
+
+            // Add user to the new team
+            user.team = team._id;
+            if (!team.teamMembers) {
+                team.teamMembers = [];
+            }
+            team.teamMembers.push(user._id);
+            await team.save();
+        }
+
+        // Save the updated user
+        const updatedUser = await user.save();
+        // Exclude sensitive data from response
+        const cleanedUser = removeSensitiveFields(updatedUser.toObject());
+
+
+
+        return res.status(200).json({
+            message: 'User updated successfully',
+            data: cleanedUser
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
+};
 
 
 
@@ -185,4 +249,4 @@ const deleteUsers = async (req, res) => {
 
 
 
-module.exports = { userSignUp, displayUser, userLogIn, getUser, deleteUsers };
+module.exports = { userSignUp, displayUser, userLogIn, getUser, deleteUsers, updateUser };

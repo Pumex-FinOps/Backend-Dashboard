@@ -8,7 +8,7 @@ async function fileUpload(req, res) {
         const { originalname, buffer } = req.file;
         //console.log(buffer)
         const params = {
-            Bucket: "arnodebucket/myCart",
+            Bucket: "arnodebucket/CloudDashboard",
             ACL: "public-read",
             ContentType: req.file.mimetype,
             Key: originalname,
