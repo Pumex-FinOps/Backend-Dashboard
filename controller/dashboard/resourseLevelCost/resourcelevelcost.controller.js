@@ -8,7 +8,9 @@ async function getCostOfAllResources(req, res) {
         if (res) {
             res.status(200).json(data);
         }
+        console.log("data is",data)
         return data;
+    
     } catch (err) {
         console.error('Error retrieving cost:', err);
         if (res) {

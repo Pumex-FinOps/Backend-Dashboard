@@ -43,8 +43,12 @@ async function getCostOfAllResources() {
         const instances = [];
         ec2Data.Reservations.forEach(reservation => {
             reservation.Instances.forEach(instance => {
+                const instanceNameTag = instance.Tags.find(tag => tag.Key === 'Name');
+                const instanceName = instanceNameTag ? instanceNameTag.Value : 'Unknown';
+                
                 instances.push({
                     ResourceId: instance.InstanceId,
+                    InstanceName: instanceName,
                     Tags: instance.Tags
                 });
             });
@@ -98,6 +102,7 @@ async function getCostOfAllResources() {
                         results[key].push({
                             AccountId: accountId,
                             ResourceId: resourceId,
+                            InstanceName: resource.InstanceName,
                             Region: region,
                             ApplicationName: appName,
                             Cost: cost,
