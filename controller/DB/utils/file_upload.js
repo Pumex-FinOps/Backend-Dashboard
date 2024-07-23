@@ -1,12 +1,12 @@
-const aws = require('../../../config/aws')
+const aws = require('../../../config/aws');
 
-const s3 = new aws.S3()
+const s3 = new aws.S3();
 
 async function fileUpload(req, res) {
-    console.log(req.body)
+
     try {
         const { originalname, buffer } = req.file;
-        //console.log(buffer)
+        console.log(req.file);
         const params = {
             Bucket: "arnodebucket/CloudDashboard",
             ACL: "public-read",
@@ -18,27 +18,24 @@ async function fileUpload(req, res) {
         const uploadedFile = await s3.upload(params).promise();
         const params1 = {
             Image: uploadedFile.Location
-        }
+        };
 
+        console.log(uploadedFile.Location);
 
-
-        console.log(uploadedFile.Location)
-        res.send({
-            message: "fileUpload successfully",
+        res.status(200).send({
+            message: "File uploaded successfully",
             data: {
                 pimage: uploadedFile.Location
             }
-        })
-        // console.log(params1);
-        // console.log(result);
-
-
+        });
 
     } catch (err) {
-        console.log(err)
-        res.send(err)
+        console.error('File upload failed:', err);
+        res.status(500).send({
+            message: "File upload failed",
+            error: err.message
+        });
     }
-
 }
 
-module.exports.fileUpload = fileUpload;
+module.exports = { fileUpload };

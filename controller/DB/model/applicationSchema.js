@@ -14,7 +14,7 @@ const applicationSchema = new mongoose.Schema({
         trim: true,
         unique:true,
         index: true,
-        lowercase: true,
+        lowercase: false,
         max: 20
     },
     costCode: {

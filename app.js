@@ -3,7 +3,7 @@ const cors = require('cors');
 const app = express();
 const bodyParser = require('body-parser');
 const db = require('./config/db')
-
+const cron = require('node-cron');
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -13,7 +13,7 @@ const { applicationSignup, displayTeam, getTeam, deleteTeam } = require("./contr
 const { resourceCount } = require("./controller/dashboard/resources/resources.controller")
 const { getTaggedResources } = require("./controller/dashboard/tagBasedResources/tagreport");
 const { costdetails } = require("./controller/dashboard/cost/cost.controller")
-const { userSignUp, userLogIn, displayUser, getUser, deleteUsers,updateUser } = require("./controller/DB/controller/user_controller")
+const { userSignUp, userLogIn, displayUser, getUser, deleteUsers, updateUser } = require("./controller/DB/controller/user_controller")
 const ticketController = require("./controller/DB/controller/ticket_controller")
 const commentController = require("./controller/DB/controller/comment_controller")
 const costcontroller = require("./controller/DB/controller/cost_controller")
@@ -25,6 +25,16 @@ const { fileUpload } = require("./controller/DB/utils/file_upload")
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+
+
+
+
+cron.schedule('10 15 * * *', async () => {
+    console.log('Starting scheduled job to get and save AWS cost...');
+    await costcontroller.getAndSaveAwsCost();
+    await resourceCostConttoller.updateResourceLevelCost();
+    console.log("completed");
+});
 
 
 app.get('/costdetails', costdetails)
@@ -68,7 +78,7 @@ app.get("/getAndSaveAwsCost", costcontroller.getAndSaveAwsCost)
 app.get("/updateAwsCost", costcontroller.updateAwsCost)
 app.get("/costs", costcontroller.displayCost)
 app.get("/costbyresource", resourceCostConttoller.updateResourceLevelCost)
-app.get("/getcostbyresource",resourceCostConttoller.displayResourceLevelCost)
+app.get("/getcostbyresource", resourceCostConttoller.displayResourceLevelCost)
 
 
 

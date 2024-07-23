@@ -90,6 +90,7 @@ const userSignUp = async (req, res) => {
                 // await newUser.save();
 
                 console.log(newUser);
+                console.log("userPassoword", password)
 
                 // Uncomment the line below to send an email with user ID and password
                 // await sendEmail(email, username, password);
@@ -111,7 +112,7 @@ const userSignUp = async (req, res) => {
             await newUser.save();
 
             console.log(newUser);
-
+            console.log("userPassoword", password)
             // await sendEmail(email, username, password);
 
             return res.status(200).json({

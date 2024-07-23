@@ -20,34 +20,42 @@ const applicationSignup = async (request, response) => {
             } else if (exist.appCode === request.body.appCode) {
                 return response.status(401).json({ message: 'Appcode already exists' });
             }
+        } else {
+            const { memberIds } = request.body;
 
-        }
-
-        else {
+            // Remove members from any existing teams
+            await Team.updateMany(
+                { teamMembers: { $in: memberIds } },
+                { $pull: { teamMembers: { $in: memberIds } } }
+            );
 
             const application = {
                 ...request.body,
-
+                teamMembers: memberIds
             };
 
             const newApplication = new Team(application);
             await newApplication.save();
             console.log(newApplication);
 
+            await User.updateMany(
+                { _id: { $in: memberIds } },
+                { $set: { teamId: newApplication._id } }
+            );
 
             response.status(200).json({
                 message: 'New team created successfully',
                 data: {
                     teamName: application.teamName
-
                 }
             });
         }
     } catch (error) {
         console.log(error);
-        response.status(500).json({ message: error });
+        response.status(500).json({ message: error.message });
     }
-}
+};
+
 
 const displayTeam = async (request, response) => {
 
@@ -69,23 +77,32 @@ const displayTeam = async (request, response) => {
 
 }
 
-const deleteTeam = async (req, res) => {
-
-    const userId = req.params._id;
+const deleteTeam = async (request, response) => {
     try {
-        const deletedUser = await User.findByIdAndDelete(userId);
-
-        if (!deletedUser) {
-            return res.status(404).json({ message: 'User not found' });
+        const { _id } = request.params;
+        console.log("teamId", _id);
+        const team = await Team.findById(_id);
+        if (!team) {
+            return response.status(404).json({ message: 'Team not found' });
         }
 
-        res.status(200).json({ message: 'User deleted successfully', deletedUser });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
-    }
+        const memberIds = team.teamMembers;
 
-}
+        await Team.findByIdAndDelete(_id);
+
+        await User.updateMany(
+            { _id: { $in: memberIds } },
+            { $set: { team: null } } 
+        );
+
+        response.status(200).json({
+            message: 'Team deleted successfully'
+        });
+    } catch (error) {
+        console.log(error);
+        response.status(500).json({ message: error.message });
+    }
+};
 
 const getTeam = async (request, response) => {
     console.log("request.params._id", request.params._id);
