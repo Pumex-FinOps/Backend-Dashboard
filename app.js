@@ -9,7 +9,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 const multer = require('multer')
-const { applicationSignup, displayTeam, getTeam, deleteTeam } = require("./controller/DB/controller/application_Controller")
+const { applicationSignup, displayTeam, getTeam, deleteTeam ,updateTeam} = require("./controller/DB/controller/application_Controller")
 const { resourceCount } = require("./controller/dashboard/resources/resources.controller")
 const { getTaggedResources } = require("./controller/dashboard/tagBasedResources/tagreport");
 const { costdetails } = require("./controller/dashboard/cost/cost.controller")
@@ -87,7 +87,7 @@ app.post('/teams', applicationSignup)
 app.get('/teams', displayTeam)
 app.delete('/teams/:_id', deleteTeam)
 app.get('/teams/:_id', getTeam)
-
+app.put('/teams/:_id',updateTeam)
 
 
 app.listen(5000, () => {
