@@ -12,7 +12,7 @@ const multer = require('multer')
 const { applicationSignup, displayTeam, getTeam, deleteTeam ,updateTeam} = require("./controller/DB/controller/application_Controller")
 const { resourceCount } = require("./controller/dashboard/resources/resources.controller")
 const { getTaggedResources } = require("./controller/dashboard/tagBasedResources/tagreport");
-const { costdetails } = require("./controller/dashboard/cost/cost.controller")
+const { costdetails ,customCostDetails } = require("./controller/dashboard/cost/cost.controller")
 const { userSignUp, userLogIn, displayUser, getUser, deleteUsers, updateUser } = require("./controller/DB/controller/user_controller")
 const ticketController = require("./controller/DB/controller/ticket_controller")
 const commentController = require("./controller/DB/controller/comment_controller")
@@ -81,7 +81,7 @@ app.get("/updateAwsCost", costcontroller.updateAwsCost)
 app.get("/costs", costcontroller.displayCost)
 app.get("/costbyresource", resourceCostConttoller.updateResourceLevelCost)
 app.get("/getcostbyresource", resourceCostConttoller.displayResourceLevelCost)
-
+app.post('/costdetails/custom',customCostDetails)
 
 
 

@@ -28,23 +28,31 @@ const updateAwsCost = async () => {
     try {
         console.log("inside updateAwsCost");
 
+        // Fetch cost details and resource counts
         let costdetail = await costdetails();
         let resourceCounts = await resourceCount();
 
+        // Prepare the total result object
         let totalResult = {
             ...costdetail,
             count: resourceCounts
         };
 
+        
+        const filter = {}; 
 
-        const filter = {};
+        // Update object with $set to ensure only existing fields are updated
         const update = {
-            data: totalResult,
-            updatedAt: new Date()
+            $set: {
+                data: totalResult,
+                updatedAt: new Date()
+            }
         };
 
-        const options = { upsert: true, new: true };
+        // Options for the update operation
+        const options = { upsert: true };
 
+        // Perform the update operation
         const updatedCost = await Cost.updateOne(filter, update, options);
 
         console.log(updatedCost);
@@ -52,6 +60,7 @@ const updateAwsCost = async () => {
         console.error(error);
     }
 };
+
 const displayCost = async (req, res) => {
     try {
         const display = await Cost.find();
