@@ -4,9 +4,10 @@ const User = require('../model/userSchema');
 const Team = require('../model/applicationSchema')
 const { sendEmail } = require('../utils/mail_controller');
 const { generateRandomString, generateUniqueUsername } = require('../utils/generators');
+const team = require('../model/applicationSchema');
 secretKey = process.env.secretKey
 const removeSensitiveFields = (obj) => {
-    const { password, accessLevel, ...cleanedObj } = obj;
+    const { password, ...cleanedObj } = obj;
     return cleanedObj;
 };
 
@@ -241,10 +242,108 @@ const updateUser = async (req, res) => {
     }
 };
 
+const insertDummyUsers = async (req, res) => {
+    try {
+        console.log("inside the signUp page");
+        console.log(req.body);
+
+        const users = req.body; // Expecting an array of user data
+
+        if (!Array.isArray(users)) {
+            return res.status(400).json({ message: 'Request body must be an array of user data' });
+        }
+
+        const results = [];
+        for (const userData of users) {
+            const { email, teamId } = userData;
+            const username = await generateUniqueUsername(email, User);
+
+            const exist = await User.findOne({ email });
+            if (exist) {
+                results.push({ email, status: 'failed', message: 'Email already exists' });
+                continue;
+            }
+
+            const password = generateRandomString(12); // Generate random password
+            const hashedPassword = await bcrypt.hash(password, 10);
+
+            const user = {
+                ...userData,
+                userName: username,
+                password: hashedPassword
+            };
+
+            try {
+                if (teamId) {
+                    console.log("teamId", teamId);
+                    const team = await Team.findOne({ _id: teamId });
+
+                    if (team) {
+                        if (!team.teamMembers) {
+                            team.teamMembers = [];
+                        }
+                        const newUser = new User(user);
+                        newUser.team = team._id;
+                        await newUser.save();
+                        team.teamMembers.push(newUser._id);
+                        await team.save();
+
+                        console.log(newUser);
+                        console.log("userPassword", password);
+
+                        // Uncomment the line below to send an email with user ID and password
+                        //await sendEmail(email, username, password);
+
+                        results.push({
+                            email,
+                            status: 'success',
+                            data: {
+                                username,
+                                email,
+                                password
+                            }
+                        });
+                    } else {
+                        console.error(`Team ${teamName} not found`);
+                        results.push({ email, status: 'failed', message: `Team ${teamName} not found` });
+                    }
+                } else {
+                    const newUser = new User(user);
+                    await newUser.save();
+
+                    console.log(newUser);
+                    console.log("userPassword", password);
+                    // await sendEmail(email, username, password);
+
+                    results.push({
+                        email,
+                        status: 'success',
+                        data: {
+                            username,
+                            email,
+                            password
+                        }
+                    });
+                }
+            } catch (err) {
+                console.log(err);
+                results.push({ email, status: 'failed', message: err.message });
+            }
+        }
+
+        return res.status(200).json({
+            message: 'User registration process completed',
+            results
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
+};
 
 
 
 
 
 
-module.exports = { userSignUp, displayUser, userLogIn, getUser, deleteUsers, updateUser };
+module.exports = { userSignUp, displayUser, userLogIn, getUser, deleteUsers, updateUser, insertDummyUsers };
