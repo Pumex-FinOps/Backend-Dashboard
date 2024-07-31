@@ -196,8 +196,6 @@ const updateUser = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-
-        // Update other fields (excluding email, username, and password)
         Object.assign(user, otherFields);
 
         // Update team if teamName is provided and different from the current team

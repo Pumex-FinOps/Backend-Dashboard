@@ -46,7 +46,7 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     accessLevel: {
-        type: String,
+        type: [String],
         enum: ['Management Level', 'Engineer Level', 'Admin Level'],
         required: true
     },
