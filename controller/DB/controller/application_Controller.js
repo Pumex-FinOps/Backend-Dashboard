@@ -59,7 +59,9 @@ const applicationSignup = async (request, response) => {
 const displayTeam = async (request, response) => {
 
     try {
-        const display = await Team.find();
+        const display = await Team.find().populate('appOwners', 'name email')
+            .populate('projectManager', 'name email')
+            .populate('teamMembers', 'name email');
         response.status(201).json({
             message: "Team data",
             data: {
@@ -107,7 +109,8 @@ const getTeam = async (request, response) => {
     console.log("request.params._id", request.params._id);
     try {
         const display = await Team.findOne({ _id: request.params._id }).populate(
-            "teamMembers")
+            "teamMembers").populate('appOwners', 'name email')
+            .populate('projectManager', 'name email')
         // console.log(request.params._id)
 
         if (display) {
@@ -163,7 +166,7 @@ const updateTeam = async (request, response) => {
 
             await User.updateMany(
                 { _id: { $in: removeMembers } },
-                { $set: { team: null } } 
+                { $set: { team: null } }
             );
         }
 

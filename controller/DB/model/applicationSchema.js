@@ -4,7 +4,7 @@ const applicationSchema = new mongoose.Schema({
     teamName: {
         type: String,
         required: true,
-        unique:true,
+        unique: true,
         trim: true,
         max: 20
     },
@@ -12,7 +12,7 @@ const applicationSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
-        unique:true,
+        unique: true,
         index: true,
         lowercase: false,
         max: 20
@@ -32,13 +32,15 @@ const applicationSchema = new mongoose.Schema({
         lowercase: true
     },
     appOwners: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users',
         //required: true,
         trim: true,
         max: 20
     },
     projectManager: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users',
         required: true,
         trim: true,
         max: 20
@@ -46,7 +48,7 @@ const applicationSchema = new mongoose.Schema({
     teamMembers: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users'
-      }]
+    }]
 },
     {
         timestamps: true
