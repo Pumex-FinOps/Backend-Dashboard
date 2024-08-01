@@ -241,11 +241,12 @@ const costdetails = async (req, res) => {
     };
 
     console.log("Cost details:", result);
-    res.json(result);
+    return result;
 
   } catch (error) {
     console.error("Error in costdetails:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    return error
+
   }
 };
 
