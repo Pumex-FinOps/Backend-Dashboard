@@ -83,7 +83,7 @@ const resourceCount = async (req, res) => {
 
         console.log('Response Data:', JSON.stringify(responseData, null, 2)); // Log the response data
 
-        res.json(responseData);
+        // res.json(responseData);
 
         return responseData; // Return the response data
     } catch (err) {
