@@ -204,7 +204,9 @@ const costdetails = async (req, res) => {
 
     const formattedTotalYearlyCost = sumMonthlyCosts(totalYearlyCostResponse);
     const formattedTotalCurrentMonthCost = sumMonthlyCosts(totalCurrentMonthCostResponse);
-    const formattedTotalPreviousMonthCost = sumMonthlyCosts(totalPreviousMonthCostResponse);
+    const formattedTotalPreviousMonthCost = sumMonthlyCosts(
+      
+    );
 
     let formattedYearlyCosts = {};
     let formattedCurrentMonthCosts = {};
