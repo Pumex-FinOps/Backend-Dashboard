@@ -92,6 +92,11 @@ app.get('/teams/:_id', getTeam)
 app.put('/teams/:_id',updateTeam)
 
 
+
+
+app.get("/",(req,res)=>{
+    res.send("welcome to backend ")
+})
 app.listen(5000, () => {
     console.log('Server started on port 5000');
 });

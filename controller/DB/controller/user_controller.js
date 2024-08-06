@@ -146,11 +146,11 @@ const displayUser = async (req, res) => {
 
 const getUser = async (req, res) => {
     try {
-        const display = await User.findOne({ _id: req.params._id }).populate("team")
-        const cleanedUsers = display.map(user => removeSensitiveFields(user.toObject()))
-        if (cleanedUsers) {
+        const user = await User.findOne({ _id: req.params._id }).populate("team").exec();
+        if (user) {
+            const cleanedUser = removeSensitiveFields(user.toObject());
             res.status(200).json({
-                data: cleanedUsers
+                data: cleanedUser
             });
         } else {
             res.status(404).json({ message: 'User not found' });
