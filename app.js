@@ -52,7 +52,7 @@ app.post('/login', userLogIn)
 app.get('/users', displayUser)
 app.get('/users/:_id', getUser)
 app.put('/users/:_id', updateUser)
-app.put('/users/chagepassword', changePassword)
+app.put('/users/changePassword', changePassword)
 app.delete('/users/:_id', deleteUsers)
 
 
