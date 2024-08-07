@@ -4,7 +4,6 @@ const User = require('../model/userSchema');
 const Team = require('../model/applicationSchema')
 const { sendEmail } = require('../utils/mail_controller');
 const { generateRandomString, generateUniqueUsername } = require('../utils/generators');
-const team = require('../model/applicationSchema');
 secretKey = process.env.secretKey
 const removeSensitiveFields = (obj) => {
     const { password, ...cleanedObj } = obj;
@@ -30,7 +29,7 @@ const userLogIn = async (req, res) => {
             console.log(isPasswordValid);
 
             if (isPasswordValid) {
-                const token = jwt.sign({ userId: user._id, accessLevel: user.accessLevel, name: user.userName }, secretKey, { expiresIn: '1h' });
+                const token = jwt.sign({ userId: user._id, name: user.userName }, secretKey, { expiresIn: '7d' });
                 return res.status(200).json({
                     message: `${user.userName} login successful`,
                     token: token,
@@ -132,6 +131,8 @@ const userSignUp = async (req, res) => {
 };
 const displayUser = async (req, res) => {
     try {
+
+        console.log(req.user.userId);
         const display = await User.find().populate("team")
         const cleanedUsers = display.map(user => removeSensitiveFields(user.toObject()))
         res.status(200).json({
@@ -145,8 +146,9 @@ const displayUser = async (req, res) => {
 };
 
 const getUser = async (req, res) => {
+    console.log(req.user.userId);
     try {
-        const user = await User.findOne({ _id: req.params._id }).populate("team").exec();
+        const user = await User.findOne({ _id: req.params.userId }).populate("team").exec();
         if (user) {
             const cleanedUser = removeSensitiveFields(user.toObject());
             res.status(200).json({
@@ -182,7 +184,6 @@ const deleteUsers = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
-
 const updateUser = async (req, res) => {
     try {
         // console.log("inside the updateUser function");
@@ -265,11 +266,6 @@ const changePassword = async (req, res) => {
         return res.status(500).json({ message: 'Error while changing password' });
     }
 };
-
-
-
-
-
 
 const insertDummyUsers = async (req, res) => {
     try {
@@ -375,4 +371,4 @@ const insertDummyUsers = async (req, res) => {
 
 
 
-module.exports = { userSignUp, displayUser, userLogIn, getUser, deleteUsers, updateUser,changePassword , insertDummyUsers };
+module.exports = { userSignUp, displayUser, userLogIn, getUser, deleteUsers, updateUser, changePassword, insertDummyUsers };

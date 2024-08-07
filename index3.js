@@ -9,6 +9,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 const multer = require('multer')
+const {authenticateToken} = require("./controller/DB/utils/middleware")
 const { resourceCount } = require("./controller/dashboard/resources/resources.controller")
 const { getTaggedResources } = require("./controller/dashboard/tagBasedResources/tagreport");
 //const { addApplicationTeam } = require("./controller/DB/Team/Team.controller")
@@ -37,11 +38,10 @@ app.post('/newuser', userSignUp)
 app.post('/signup', userSignUp)
 app.post('/insertDummyUsers',insertDummyUsers)
 app.post('/login', userLogIn)
-app.get('/users', displayUser)
-app.get('/users/:_id', getUser)
-
+app.get('/users/manyuser', authenticateToken,displayUser)
+app.get('/users/oneuser', authenticateToken,getUser)
 //app.put('/users/:_id', updateUser)
-app.delete('/users/:_id', deleteUsers)
+app.delete('/users/:_id',authenticateToken, deleteUsers)
 
 
 

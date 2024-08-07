@@ -205,7 +205,7 @@
 //     const formattedTotalYearlyCost = sumMonthlyCosts(totalYearlyCostResponse);
 //     const formattedTotalCurrentMonthCost = sumMonthlyCosts(totalCurrentMonthCostResponse);
 //     const formattedTotalPreviousMonthCost = sumMonthlyCosts(
-      
+
 //     );
 
 //     let formattedYearlyCosts = {};
@@ -346,7 +346,7 @@ const sumMonthlyCosts = (response) => {
     console.warn('Response or ResultsByTime is undefined:', response);
     return 0;
   }
-  
+
   return response.ResultsByTime.reduce((sum, result) => {
     let monthlyCost = result.Total && result.Total.UnblendedCost ? parseFloat(result.Total.UnblendedCost.Amount) : 0;
     return sum + monthlyCost;
@@ -442,7 +442,7 @@ const costdetails = async (req, res) => {
     };
 
     console.log("Cost details:", result);
-    res.json(result);
+    return result;
 
   } catch (error) {
     console.error("Error in costdetails:", error);

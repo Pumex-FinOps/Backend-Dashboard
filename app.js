@@ -7,6 +7,9 @@ const cron = require('node-cron');
 
 app.use(bodyParser.json());
 app.use(cors());
+// app.use(cors({
+//     origin: 'https://prod.d39pyo3sxrr0ns.amplifyapp.com/'
+// }));
 
 const multer = require('multer')
 const { applicationSignup, displayTeam, getTeam, deleteTeam, updateTeam } = require("./controller/DB/controller/application_Controller")
@@ -14,11 +17,10 @@ const { resourceCount } = require("./controller/dashboard/resources/resources.co
 const { getTaggedResources } = require("./controller/dashboard/tagBasedResources/tagreport");
 const { costdetails, customCostDetails } = require("./controller/dashboard/cost/cost.controller")
 const { userSignUp, userLogIn, displayUser, getUser, deleteUsers, updateUser, changePassword } = require("./controller/DB/controller/user_controller")
-const ticketController = require("./controller/DB/controller/ticket_controller")
-const commentController = require("./controller/DB/controller/comment_controller")
 const costcontroller = require("./controller/DB/controller/cost_controller")
 const resourceCostConttoller = require("./controller/DB/controller/resourceCost_controller")
 const { getCostOfAllResources } = require('./controller/dashboard/resourseLevelCost/resourcelevelcost.controller');
+const { authenticateToken } = require("./controller/DB/utils/middleware")
 
 
 const { fileUpload } = require("./controller/DB/utils/file_upload")
@@ -49,31 +51,14 @@ app.get('/resourceLevelCost', getCostOfAllResources)
 
 app.post('/signup', userSignUp)
 app.post('/login', userLogIn)
-app.get('/users', displayUser)
-app.get('/users/:_id', getUser)
-app.put('/users/:_id', updateUser)
-app.put('/users/changePassword', changePassword)
-app.delete('/users/:_id', deleteUsers)
+app.get('/users', authenticateToken, displayUser)
+app.get('/users/:_id', authenticateToken, getUser)
+app.put('/users/changePassword', authenticateToken, changePassword)
+app.put('/users/:_id', authenticateToken, updateUser)
+app.delete('/users/:_id', authenticateToken, deleteUsers)
 
 
 
-
-app.post('/tickets', ticketController.createTicket);
-app.get('/tickets', ticketController.getAllTickets);
-app.get('/tickets/:id', ticketController.getTicketById);
-app.put('/tickets/:id', ticketController.updateTicket);
-app.delete('/tickets/:id', ticketController.deleteTicket);
-app.get('/tickets/assigned-to-member/:memberId', ticketController.getTicketsByAssignedMember);
-app.get('/tickets/assigned-to-team/:teamId', ticketController.getTicketsByTeam);
-app.get('/tickets/assigned-to-user/:userId', ticketController.getTicketsByUserId);
-
-
-
-app.post('/comments', commentController.createComment);
-app.get('/comments/ticket/:ticketId', commentController.getCommentsByTicketId);
-app.get('/comments/user/:userId', commentController.getCommentsByUserId);
-app.put('/comments/:id', commentController.updateComment);
-app.delete('/comments/:id', commentController.deleteComment);
 
 app.post("/upload", upload.single('file'), fileUpload)
 
@@ -87,11 +72,11 @@ app.post('/costdetails/custom', customCostDetails)
 
 
 
-app.post('/teams', applicationSignup)
-app.get('/teams', displayTeam)
-app.delete('/teams/:_id', deleteTeam)
-app.get('/teams/:_id', getTeam)
-app.put('/teams/:_id', updateTeam)
+app.post('/teams', authenticateToken, applicationSignup)
+app.get('/teams', authenticateToken, displayTeam)
+app.delete('/teams/:_id', authenticateToken, deleteTeam)
+app.get('/teams/:_id', authenticateToken, getTeam)
+app.put('/teams/:_id', authenticateToken, updateTeam)
 
 
 

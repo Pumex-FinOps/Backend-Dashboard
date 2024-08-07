@@ -24,7 +24,7 @@ const getAndSaveAwsCost = async () => {
 
 
 }
-const updateAwsCost = async () => {
+const updateAwsCost = async (req, res) => {
     try {
         console.log("inside updateAwsCost");
 
@@ -38,24 +38,22 @@ const updateAwsCost = async () => {
             count: resourceCounts
         };
 
-        
-        const filter = {}; 
+        const filter = {};
 
-        // Update object with $set to ensure only existing fields are updated
-        const update = {
-            $set: {
-                data: totalResult,
-                updatedAt: new Date()
-            }
+        // Delete the existing document
+        await Cost.deleteMany(filter);
+
+        // Prepare the new document
+        const newDocument = {
+            data: totalResult,
+            updatedAt: new Date()
         };
 
-        // Options for the update operation
-        const options = { upsert: true };
+        // Insert the new document
+        const insertedCost = await Cost.create(newDocument);
 
-        // Perform the update operation
-        const updatedCost = await Cost.updateOne(filter, update, options);
-
-        console.log(updatedCost);
+        console.log(insertedCost);
+        res.send(insertedCost)
     } catch (error) {
         console.error(error);
     }
