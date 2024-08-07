@@ -9,11 +9,11 @@ app.use(bodyParser.json());
 app.use(cors());
 
 const multer = require('multer')
-const { applicationSignup, displayTeam, getTeam, deleteTeam ,updateTeam} = require("./controller/DB/controller/application_Controller")
+const { applicationSignup, displayTeam, getTeam, deleteTeam, updateTeam } = require("./controller/DB/controller/application_Controller")
 const { resourceCount } = require("./controller/dashboard/resources/resources.controller")
 const { getTaggedResources } = require("./controller/dashboard/tagBasedResources/tagreport");
-const { costdetails ,customCostDetails } = require("./controller/dashboard/cost/cost.controller")
-const { userSignUp, userLogIn, displayUser, getUser, deleteUsers, updateUser } = require("./controller/DB/controller/user_controller")
+const { costdetails, customCostDetails } = require("./controller/dashboard/cost/cost.controller")
+const { userSignUp, userLogIn, displayUser, getUser, deleteUsers, updateUser, changePassword } = require("./controller/DB/controller/user_controller")
 const ticketController = require("./controller/DB/controller/ticket_controller")
 const commentController = require("./controller/DB/controller/comment_controller")
 const costcontroller = require("./controller/DB/controller/cost_controller")
@@ -52,7 +52,9 @@ app.post('/login', userLogIn)
 app.get('/users', displayUser)
 app.get('/users/:_id', getUser)
 app.put('/users/:_id', updateUser)
+app.put('/users/chagepassword', changePassword)
 app.delete('/users/:_id', deleteUsers)
+
 
 
 
@@ -81,7 +83,7 @@ app.get("/updateAwsCost", costcontroller.updateAwsCost)
 app.get("/costs", costcontroller.displayCost)
 app.get("/costbyresource", resourceCostConttoller.updateResourceLevelCost)
 app.get("/getcostbyresource", resourceCostConttoller.displayResourceLevelCost)
-app.post('/costdetails/custom',customCostDetails)
+app.post('/costdetails/custom', customCostDetails)
 
 
 
@@ -89,12 +91,12 @@ app.post('/teams', applicationSignup)
 app.get('/teams', displayTeam)
 app.delete('/teams/:_id', deleteTeam)
 app.get('/teams/:_id', getTeam)
-app.put('/teams/:_id',updateTeam)
+app.put('/teams/:_id', updateTeam)
 
 
 
 
-app.get("/",(req,res)=>{
+app.get("/", (req, res) => {
     res.send("welcome to backend ")
 })
 app.listen(5000, () => {

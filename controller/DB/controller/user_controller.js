@@ -239,6 +239,37 @@ const updateUser = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+const changePassword = async (req, res) => {
+    try {
+        const user = await User.findOne({ _id: req.body.userId });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+
+        const isPasswordValid = await bcrypt.compare(req.body.currentPassword, user.password);
+
+        if (!isPasswordValid) {
+            return res.status(401).json({ message: 'Current password is incorrect' });
+        }
+
+
+        const newPasswordHash = await bcrypt.hash(req.body.newPassword, 10);
+        user.password = newPasswordHash;
+        await user.save();
+
+        return res.status(200).json({ message: 'Password changed successfully' });
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Error while changing password' });
+    }
+};
+
+
+
+
+
 
 const insertDummyUsers = async (req, res) => {
     try {
@@ -344,4 +375,4 @@ const insertDummyUsers = async (req, res) => {
 
 
 
-module.exports = { userSignUp, displayUser, userLogIn, getUser, deleteUsers, updateUser, insertDummyUsers };
+module.exports = { userSignUp, displayUser, userLogIn, getUser, deleteUsers, updateUser,changePassword , insertDummyUsers };
