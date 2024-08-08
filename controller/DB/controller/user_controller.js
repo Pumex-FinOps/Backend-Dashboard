@@ -146,9 +146,8 @@ const displayUser = async (req, res) => {
 };
 
 const getUser = async (req, res) => {
-    console.log(req.user.userId);
     try {
-        const user = await User.findOne({ _id: req.params.userId }).populate("team").exec();
+        const user = await User.findOne({ _id: req.params._id }).populate("team").exec();
         if (user) {
             const cleanedUser = removeSensitiveFields(user.toObject());
             res.status(200).json({
