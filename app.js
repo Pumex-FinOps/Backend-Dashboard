@@ -21,6 +21,7 @@ const costcontroller = require("./controller/DB/controller/cost_controller")
 const resourceCostConttoller = require("./controller/DB/controller/resourceCost_controller")
 const { getCostOfAllResources } = require('./controller/dashboard/resourseLevelCost/resourcelevelcost.controller');
 const { authenticateToken } = require("./controller/DB/utils/middleware")
+const {initializeAdmin} = require("./controller/DB/utils/adminUtils")
 
 
 const { fileUpload } = require("./controller/DB/utils/file_upload")
@@ -37,6 +38,9 @@ cron.schedule('10 15 * * *', async () => {
     await resourceCostConttoller.updateResourceLevelCost();
     console.log("completed");
 });
+// Initialize default admin 
+initializeAdmin()
+
 
 
 app.get('/costdetails', costdetails)
