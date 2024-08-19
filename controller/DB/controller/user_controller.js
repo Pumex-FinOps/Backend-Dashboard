@@ -134,7 +134,8 @@ const displayUser = async (req, res) => {
 
         console.log(req.user.userId);
         const display = await User.find().populate("team")
-        const cleanedUsers = display.map(user => removeSensitiveFields(user.toObject()))
+        const filteredUsers = display.filter(user => user.userName !== 'admin');
+        const cleanedUsers = filteredUsers.map(user => removeSensitiveFields(user.toObject()))
         res.status(200).json({
             message: "Users data",
             data: cleanedUsers
