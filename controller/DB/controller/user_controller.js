@@ -265,7 +265,27 @@ const changePassword = async (req, res) => {
         return res.status(500).json({ message: 'Error while changing password' });
     }
 };
+const resetPassword = async (req, res) => {
+    try {
+        const { email, newPassword } = req.body;
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
 
+        // Hash the new password and update the user's password
+        req.body.newPassword = await bcrypt.hash(newPassword, 10);
+        user.password = req.body.newPassword;
+
+        await user.save();
+
+        return res.status(200).json({ message: 'Password reset successfully' });
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Error while resetting password' });
+    }
+};
 const insertDummyUsers = async (req, res) => {
     try {
         console.log("inside the signUp page");
@@ -370,4 +390,4 @@ const insertDummyUsers = async (req, res) => {
 
 
 
-module.exports = { userSignUp, displayUser, userLogIn, getUser, deleteUsers, updateUser, changePassword, insertDummyUsers };
+module.exports = { userSignUp, displayUser, userLogIn, getUser, deleteUsers, updateUser, changePassword, resetPassword, insertDummyUsers };

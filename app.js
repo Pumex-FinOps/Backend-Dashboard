@@ -16,7 +16,7 @@ const { applicationSignup, displayTeam, getTeam, deleteTeam, updateTeam } = requ
 const { resourceCount } = require("./controller/dashboard/resources/resources.controller")
 const { getTaggedResources } = require("./controller/dashboard/tagBasedResources/tagreport");
 const { costdetails, customCostDetails } = require("./controller/dashboard/cost/cost.controller")
-const { userSignUp, userLogIn, displayUser, getUser, deleteUsers, updateUser, changePassword } = require("./controller/DB/controller/user_controller")
+const { userSignUp, userLogIn, displayUser, getUser, deleteUsers, updateUser, changePassword, resetPassword } = require("./controller/DB/controller/user_controller")
 const costcontroller = require("./controller/DB/controller/cost_controller")
 const resourceCostConttoller = require("./controller/DB/controller/resourceCost_controller")
 const { getCostOfAllResources } = require('./controller/dashboard/resourseLevelCost/resourcelevelcost.controller');
@@ -54,6 +54,7 @@ app.post('/login', userLogIn)
 app.get('/users', authenticateToken, displayUser)
 app.get('/users/:_id', authenticateToken, getUser)
 app.put('/users/changePassword', authenticateToken, changePassword)
+app.put('/users/resetPassword', resetPassword)
 app.put('/users/:_id', authenticateToken, updateUser)
 app.delete('/users/:_id', authenticateToken, deleteUsers)
 

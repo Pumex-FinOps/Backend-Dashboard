@@ -14,7 +14,7 @@ const { resourceCount } = require("./controller/dashboard/resources/resources.co
 const { getTaggedResources } = require("./controller/dashboard/tagBasedResources/tagreport");
 //const { addApplicationTeam } = require("./controller/DB/Team/Team.controller")
 const { costdetails } = require("./controller/dashboard/cost/cost.controller")
-const { userSignUp, userLogIn, displayUser, getUser, deleteUsers ,insertDummyUsers } = require("./controller/DB/controller/user_controller")
+const { userSignUp, userLogIn, displayUser, getUser, deleteUsers ,insertDummyUsers ,resetPassword} = require("./controller/DB/controller/user_controller")
 const ticketController = require("./controller/DB/controller/ticket_controller")
 const commentController = require("./controller/DB/controller/comment_controller")
 const costcontroller = require("./controller/DB/controller/cost_controller")
@@ -42,6 +42,7 @@ app.get('/users/manyuser', authenticateToken,displayUser)
 app.get('/users/oneuser', authenticateToken,getUser)
 //app.put('/users/:_id', updateUser)
 app.delete('/users/:_id',authenticateToken, deleteUsers)
+app.put('/users/resetPassword',resetPassword)
 
 
 
