@@ -1,39 +1,26 @@
+const AWS = require("./config/aws");
+require('dotenv').config()
+const {assumeRoleV2} = require("./config/assumeRole")
+// Configure AWS SDK for Account A
+AWS.config.update({ region: 'us-east-1' });
+
+const sts = new AWS.STS();
+let accountIds = process.env.ACCOUNT_IDS.split(',');
+
 const express = require('express');
-const cors = require('cors');
+const { costdetails } = require('./controller/dashboard/cost/cost.controller');
+const { resourceCount } = require("./controller/dashboard/resources/resources.controller")
+const {getTaggedResources}= require("./controller/dashboard/tagBasedResources/tagreport")
 const app = express();
-const bodyParser = require('body-parser');
-const db = require('./config/db')
 
+app.use(express.json());
 
-app.use(bodyParser.json());
-app.use(cors());
-
-const multer = require('multer')
-
-const { applicationSignup,displayTeam,getTeam,deleteTeam} = require("./controller/DB/controller/application_Controller")
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
-
-
-app.post('/login', applicationSignup)
-app.get('/teams',displayTeam)  
-app.delete('/teams/:_id',deleteTeam)
-app.get('/teams/:_id',getTeam)
-
-// app.get("/getuser/:empId", getUserbyId)
-// app.get("/getalluser", getAllUser)
-
-
-
-
-
-
-
-
-// app.post("/upload", upload.single('file'), fileUpload)
-
-
-
-app.listen(4000, () => {
-    console.log('Server started on port 4000');
+app.get('/costdetails', costdetails)
+app.get('/resourceCount', resourceCount)
+app.get('/tagreport',getTaggedResources)
+app.get("/", (req, res) => {
+  res.send("welcome to backend ")
+})
+app.listen(5000, () => {
+  console.log('Server started on port 5000');
 });

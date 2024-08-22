@@ -5,10 +5,10 @@ const User = require('../model/userSchema');
 
 // Middleware to verify JWT and validate user
 async function authenticateToken(req, res, next) {
-    //console.log("welcome to authenticateToken");
+    console.log("welcome to authenticateToken");
 
     const authHeader = req.headers['authorization'];
-
+    console.log("authheader is",authHeader);
     const token = authHeader && authHeader.split(' ')[1];
 
     if (token == null) return res.sendStatus(401); // If no token, return unauthorized

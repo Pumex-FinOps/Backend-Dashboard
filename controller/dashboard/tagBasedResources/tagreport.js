@@ -3,8 +3,7 @@ const { regionList } = require("../../../config/RegionList");
 
 const getTaggedResources = async (req, res) => {
     try {
-        const applicationName = req.params.applicationName || 'FinOps'; // Default to 'FinOps' if not provided
-        let allResources = [];
+        let applicationCount = {};
 
         for (const region of regionList) {
             AWS.config.update({ region });
@@ -15,7 +14,7 @@ const getTaggedResources = async (req, res) => {
                 TagFilters: [
                     {
                         Key: 'ApplicationName',
-                        Values: [applicationName],
+                        Values: ['DevOps', 'FinOps', 'Development', 'testing']
                     },
                 ],
             };
@@ -23,23 +22,26 @@ const getTaggedResources = async (req, res) => {
             let result;
             do {
                 result = await resourcegroupstaggingapi.getResources(params).promise();
-                let resources = result.ResourceTagMappingList.map(tagMapping => {
+                result.ResourceTagMappingList.forEach(tagMapping => {
                     let applicationNameTag = tagMapping.Tags.find(tag => tag.Key === 'ApplicationName');
-                    return {
-                        ResourceARN: tagMapping.ResourceARN,
-                        ApplicationName: applicationNameTag ? applicationNameTag.Value : null
-                    };
-                });
+                    let applicationName = applicationNameTag ? applicationNameTag.Value : null;
 
-                allResources = allResources.concat(resources);
+                    // Increment count for the application name
+                    if (applicationName) {
+                        if (!applicationCount[applicationName]) {
+                            applicationCount[applicationName] = 0;
+                        }
+                        applicationCount[applicationName]++;
+                    }
+                });
 
                 params.PaginationToken = result.PaginationToken;
             } while (result.PaginationToken);
         }
 
         let response = {
-            resourceCount: allResources.length,
-            resources: allResources
+            totalResourceCount: Object.values(applicationCount).reduce((sum, count) => sum + count, 0),
+            applicationCount: applicationCount
         };
 
         console.log(response); // For debugging
