@@ -5,8 +5,9 @@ const initializeAdmin = async () => {
     try {
         const adminUsername = 'admin';
         const adminPassword = 'admin';
-        
+
         const existingAdmin = await User.findOne({ userName: adminUsername });
+        console.log("Default admin alredy exist");
         if (existingAdmin) return;
 
         const hashedPassword = await bcrypt.hash(adminPassword, 10);
