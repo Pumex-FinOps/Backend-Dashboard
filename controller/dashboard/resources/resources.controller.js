@@ -93,7 +93,9 @@ const resourceCount = async (req, res) => {
                 s3: { totalCount: s3TotalCount, details: s3Result.buckets },
                 lambda: { totalCount: lambdaTotalCount, details: lambdaFunctionsByRegion },
                 cloudWatchLogs: { totalCount: cloudWatchLogTotalCount, details: cloudWatchLogGroupsByRegion },
-                total: ec2TotalCount + ebsTotalCount + s3TotalCount + lambdaTotalCount + cloudWatchLogTotalCount
+                
+            total: ec2TotalCount + ebsTotalCount + s3TotalCount + lambdaTotalCount + cloudWatchLogTotalCount
+            // total:ec2TotalCount
             };
         }));
 

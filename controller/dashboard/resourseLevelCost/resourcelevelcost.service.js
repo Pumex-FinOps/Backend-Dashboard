@@ -1,13 +1,137 @@
-const AWS = require("../../../config/aws");
-const { regionList } = require("../../../config/RegionList");
+// const AWS = require("../../../config/aws");
+// const { regionList } = require("../../../config/RegionList");
 
-const accountId = '123456789012'; // Replace with your account ID
+// const accountId = '123456789012'; // Replace with your account ID
+
+// function getFormattedDate(date) {
+//     return date.toISOString().split('T')[0];
+// }
+
+// async function getCostOfAllResources() {
+//     const results = {
+//         EC2: [],
+//         EBS: [],
+//         S3: [],
+//         Lambda: []
+//     };
+
+//     const endDate = new Date();
+//     const startDate = new Date();
+//     startDate.setDate(endDate.getDate() - 14);
+
+//     const formattedEndDate = getFormattedDate(endDate);
+//     const formattedStartDate = getFormattedDate(startDate);
+
+//     for (const region of regionList) {
+//         AWS.config.update({ region });
+
+//         const ce = new AWS.CostExplorer();
+//         const ec2 = new AWS.EC2();
+//         const s3 = new AWS.S3();
+//         const lambda = new AWS.Lambda();
+
+//         // Fetch EC2 instances
+//         const ec2Params = {
+//             Filters: [
+//                 {
+//                     Name: 'instance-state-name',
+//                     Values: ['running', 'stopped']
+//                 }
+//             ]
+//         };
+//         const ec2Data = await ec2.describeInstances(ec2Params).promise();
+//         const instances = [];
+//         ec2Data.Reservations.forEach(reservation => {
+//             reservation.Instances.forEach(instance => {
+//                 const instanceNameTag = instance.Tags.find(tag => tag.Key === 'Name');
+//                 const instanceName = instanceNameTag ? instanceNameTag.Value : 'Unknown';
+                
+//                 instances.push({
+//                     ResourceId: instance.InstanceId,
+//                     InstanceName: instanceName,
+//                     Tags: instance.Tags
+//                 });
+//             });
+//         });
+
+//         const resources = [...instances];
+
+//         const services = [
+//             { service: 'Amazon Elastic Compute Cloud - Compute', key: 'EC2' }
+//             // Uncomment and add more services as needed
+//             // { service: 'Amazon Elastic Block Store', key: 'EBS' },
+//             // { service: 'Amazon Simple Storage Service', key: 'S3' },
+//             // { service: 'AWS Lambda', key: 'Lambda' }
+//         ];
+
+//         for (const { service, key } of services) {
+//             const params = {
+//                 TimePeriod: {
+//                     Start: formattedStartDate,
+//                     End: formattedEndDate
+//                 },
+//                 Granularity: 'MONTHLY',
+//                 Metrics: ['BlendedCost'],
+//                 GroupBy: [
+//                     {
+//                         Type: 'DIMENSION',
+//                         Key: 'RESOURCE_ID'
+//                     }
+//                 ],
+//                 Filter: {
+//                     Dimensions: {
+//                         Key: 'SERVICE',
+//                         Values: [service]
+//                     }
+//                 }
+//             };
+
+//             const costData = await ce.getCostAndUsageWithResources(params).promise();
+
+//             costData.ResultsByTime.forEach(result => {
+//                 result.Groups.forEach(group => {
+//                     const resourceId = group.Keys[0];
+//                     const cost = group.Metrics.BlendedCost.Amount;
+
+//                     const resource = resources.find(res => res.ResourceId === resourceId);
+
+//                     if (resource) {
+//                         const appNameTag = resource.Tags.find(tag => tag.Key === 'ApplicationName');
+//                         const appName = appNameTag ? appNameTag.Value : 'Unknown';
+
+//                         results[key].push({
+//                             AccountId: accountId,
+//                             ResourceId: resourceId,
+//                             InstanceName: resource.InstanceName,
+//                             Region: region,
+//                             ApplicationName: appName,
+//                             Cost: cost,
+//                             Service: service
+//                         });
+//                     }
+//                 });
+//             });
+//         }
+//     }
+
+//     return results;
+// }
+
+// module.exports = {
+//     getCostOfAllResources
+// };
+
+
+
+const AWS = require("../../../config/aws");
+const { assumeRoleV2 } = require("../../../config/assumeRole");
+const { regionList } = require("../../../config/RegionList");
 
 function getFormattedDate(date) {
     return date.toISOString().split('T')[0];
 }
 
-async function getCostOfAllResources() {
+async function getCostOfAllResources(accountId) {
     const results = {
         EC2: [],
         EBS: [],
@@ -22,13 +146,22 @@ async function getCostOfAllResources() {
     const formattedEndDate = getFormattedDate(endDate);
     const formattedStartDate = getFormattedDate(startDate);
 
+    // Assume role for the given account
+    let credentials = await assumeRoleV2(accountId);
+    let accessKeyId = credentials.Credentials.AccessKeyId;
+    let secretAccessKey = credentials.Credentials.SecretAccessKey;
+    let sessionToken = credentials.Credentials.SessionToken;
+
+    let awsCredentials = new AWS.Credentials(accessKeyId, secretAccessKey, sessionToken);
+
     for (const region of regionList) {
-        AWS.config.update({ region });
+        AWS.config.update({
+            region,
+            credentials: awsCredentials
+        });
 
         const ce = new AWS.CostExplorer();
         const ec2 = new AWS.EC2();
-        const s3 = new AWS.S3();
-        const lambda = new AWS.Lambda();
 
         // Fetch EC2 instances
         const ec2Params = {
@@ -117,7 +250,18 @@ async function getCostOfAllResources() {
     return results;
 }
 
-module.exports = {
-    getCostOfAllResources
-};
+async function getCostForAllAccounts() {
+    const accountIds = process.env.ACCOUNT_IDS.split(',');
+    let allResults = [];
 
+    for (let accountId of accountIds) {
+        const accountResults = await getCostOfAllResources(accountId);
+        allResults.push(...accountResults.EC2); // Add other services if required
+    }
+
+    return allResults;
+}
+
+module.exports = {
+    getCostForAllAccounts
+};

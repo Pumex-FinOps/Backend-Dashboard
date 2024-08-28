@@ -322,8 +322,10 @@ const getServiceClient = async (accountId, service, region) => {
 
 // Function to get details of EC2 instances in a specific region for a specific account
 const describeInstance = async (accountId, region) => {
-    console.log("Inside describeInstance");
+    // console.log("Inside describeInstance");
     let ec2 = await getServiceClient(accountId, 'EC2', region);
+    // console.log("ec2",ec2);
+    
     let instances = [];
     let nextToken = null;
 
@@ -331,7 +333,7 @@ const describeInstance = async (accountId, region) => {
         console.log(`Calling describeInstances with nextToken: ${nextToken}`);
         let result = await ec2.describeInstances({ NextToken: nextToken }).promise();
         nextToken = result.NextToken;
-        console.log(`NextToken: ${nextToken}`);
+        // console.log(`NextToken: ${nextToken}`);
 
         for (let reservation of result.Reservations) {
             for (let instance of reservation.Instances) {
