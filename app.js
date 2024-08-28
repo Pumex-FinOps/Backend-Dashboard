@@ -32,12 +32,12 @@ const upload = multer({ storage: storage });
 
 
 
-cron.schedule('10 15 * * *', async () => {
-    console.log('Starting scheduled job to get and save AWS cost...');
-    await costcontroller.updateAwsCost();
-    await resourceCostConttoller.updateResourceLevelCost();
-    console.log("completed");
-});
+// cron.schedule('10 15 * * *', async () => {
+//     console.log('Starting scheduled job to get and save AWS cost...');
+//     await costcontroller.updateAwsCost();
+//     await resourceCostConttoller.updateResourceLevelCost();
+//     console.log("completed");
+// });
 // Initialize default admin 
 initializeAdmin()
 

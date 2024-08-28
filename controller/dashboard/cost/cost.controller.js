@@ -270,7 +270,7 @@ const costdetails = async (req, res) => {
         let services = {
             EC2: ["Amazon Elastic Compute Cloud - Compute", "EC2 - Other"],
             EBS: ["Amazon Elastic Block Store"],
-            S3: ["Amazon Simple Storage Service"],
+            // S3: ["Amazon Simple Storage Service"],
             // Lambda: ["AWS Lambda"],
             // RDS: ["Amazon RDS Service"],
             // CloudWatch: ["AmazonCloudWatch"],
@@ -283,7 +283,7 @@ const costdetails = async (req, res) => {
             // CodePipeline: ["AWS CodePipeline"]
         };
 
-        let allAccountsCostData = {};
+        let allAccountsCostData = [];
         
         for (const accountId of accountIds) {
             console.log(`Processing account: ${accountId}`);
@@ -300,7 +300,8 @@ const costdetails = async (req, res) => {
             // Fetch current month costs
             let currentMonthCosts = await fetchCosts(startOfCurrentMonth, endDate, services, awsCredentials);
 
-            allAccountsCostData[accountId] = {
+            allAccountsCostData.push({
+                AccountId: accountId,
                 Yearly: {
                     TimePeriod: {
                         Start: startOfYear,
@@ -315,13 +316,12 @@ const costdetails = async (req, res) => {
                     },
                     ...currentMonthCosts
                 }
-            };
+            });
         }
 
         let result = {
-            
-                AllAccounts: allAccountsCostData
-            }
+            AllAccounts: allAccountsCostData
+        };
             // CurrentMonth: {
             //     TimePeriod: {
             //         Start: startOfCurrentMonth,

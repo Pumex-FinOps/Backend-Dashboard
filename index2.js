@@ -11,6 +11,8 @@ const express = require('express');
 const { costdetails } = require('./controller/dashboard/cost/cost.controller');
 const { resourceCount } = require("./controller/dashboard/resources/resources.controller")
 const {getTaggedResources}= require("./controller/dashboard/tagBasedResources/tagreport")
+const { getCostOfAllResources } = require('./controller/dashboard/resourseLevelCost/resourcelevelcost.controller');
+
 const app = express();
 
 app.use(express.json());
@@ -18,6 +20,7 @@ app.use(express.json());
 app.get('/costdetails', costdetails)
 app.get('/resourceCount', resourceCount)
 app.get('/tagreport',getTaggedResources)
+app.get('/resourceLevel',getCostOfAllResources)
 app.get("/", (req, res) => {
   res.send("welcome to backend ")
 })
