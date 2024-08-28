@@ -26,34 +26,37 @@ const getAndSaveAwsCost = async () => {
 }
 const updateAwsCost = async (req, res) => {
     try {
-        console.log("inside updateAwsCost");
+         console.log("inside updateAwsCost");
 
-        // Fetch cost details and resource counts
         let costdetail = await costdetails();
-        let resourceCounts = await resourceCount();
+        // let resourceCounts = await resourceCount();
 
-        // Prepare the total result object
-        let totalResult = {
-            ...costdetail,
-            count: resourceCounts
-        };
 
-        const filter = {};
 
-        // Delete the existing document
-        await Cost.deleteMany(filter);
+        console.log("costdetail", costdetail);
 
-        // Prepare the new document
-        const newDocument = {
-            data: totalResult,
-            updatedAt: new Date()
-        };
+        // // Prepare the total result object
+        // let totalResult = {
+        //     ...costdetail,
+        //     count: resourceCounts
+        // };
 
-        // Insert the new document
-        const insertedCost = await Cost.create(newDocument);
+        // const filter = {};
 
-        console.log(insertedCost);
-        res.send(insertedCost)
+        // // Delete the existing document
+        // await Cost.deleteMany(filter);
+
+        // // Prepare the new document
+        // const newDocument = {
+        //     data: costdetail,
+        //     updatedAt: new Date()
+        // };
+
+        // // Insert the new document
+        // const insertedCost = await Cost.create(newDocument);
+
+        // console.log(insertedCost);
+        // res.send(insertedCost)
     } catch (error) {
         console.error(error);
     }
@@ -72,6 +75,7 @@ const displayCost = async (req, res) => {
         res.status(500).json({ message: 'Error while fetching  data' });
     }
 };
+
 
 
 

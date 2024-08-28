@@ -40,7 +40,7 @@ cron.schedule('10 15 * * *', async () => {
 });
 // Initialize default admin 
 initializeAdmin()
-
+costcontroller.updateAwsCost();
 
 
 app.get('/costdetails', costdetails)
