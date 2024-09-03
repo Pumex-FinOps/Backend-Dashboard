@@ -240,12 +240,12 @@ const fetchCosts = async (startDate, endDate, services, credentials) => {
     let costResponses = await Promise.all(Object.keys(services).map(service =>
         getCostForResource(services[service], startDate, endDate, credentials)
     ));
-    
+
     let formattedCosts = {};
     Object.keys(services).forEach((service, index) => {
         formattedCosts[service] = sumMonthlyCosts(costResponses[index]);
     });
-    
+
     return {
         ...formattedCosts,
         Total: calculateTotalCosts(formattedCosts)
@@ -284,7 +284,7 @@ const costdetails = async (req, res) => {
         };
 
         let allAccountsCostData = [];
-        
+
         for (const accountId of accountIds) {
             console.log(`Processing account: ${accountId}`);
 
@@ -322,17 +322,17 @@ const costdetails = async (req, res) => {
         let result = {
             AllAccounts: allAccountsCostData
         };
-            // CurrentMonth: {
-            //     TimePeriod: {
-            //         Start: startOfCurrentMonth,
-            //         End: endDate
-            //     },
-            //     AllAccounts: allAccountsCostData
-            // }
-        
+        // CurrentMonth: {
+        //     TimePeriod: {
+        //         Start: startOfCurrentMonth,
+        //         End: endDate
+        //     },
+        //     AllAccounts: allAccountsCostData
+        // }
+
 
         console.log("Cost details:", result);
-        res.json(result);
+        return result;
 
     } catch (error) {
         console.error("Error in costdetails:", error);
@@ -361,7 +361,7 @@ const customCostDetails = async (req, res) => {
         let formattedEndDate = endDate.toISOString().split('T')[0];
 
         let allAccountsCustomPeriodCostData = {};
-        
+
         for (const accountId of accountIds) {
             console.log(`Processing account: ${accountId}`);
 

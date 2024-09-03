@@ -26,41 +26,31 @@ const getAndSaveAwsCost = async () => {
 }
 const updateAwsCost = async (req, res) => {
     try {
-         console.log("inside updateAwsCost");
-
+        console.log("inside updateAwsCost");
         let costdetail = await costdetails();
         // let resourceCounts = await resourceCount();
-
-
-
-        console.log("costdetail", costdetail);
-
-        // // Prepare the total result object
-        // let totalResult = {
-        //     ...costdetail,
-        //     count: resourceCounts
-        // };
-
-        // const filter = {};
-
-        // // Delete the existing document
-        // await Cost.deleteMany(filter);
-
-        // // Prepare the new document
-        // const newDocument = {
-        //     data: costdetail,
-        //     updatedAt: new Date()
-        // };
-
-        // // Insert the new document
-        // const insertedCost = await Cost.create(newDocument);
-
-        // console.log(insertedCost);
-        // res.send(insertedCost)
+        for (const account of costdetail.AllAccounts) {
+            const { AccountId, Yearly, CurrentMonth } = account;
+            await Cost.updateOne(
+                { accountId: AccountId }, 
+                {
+                    $set: {
+                        platform: 'AWS',
+                        data: {
+                            Yearly,
+                            CurrentMonth
+                        }
+                    }
+                },
+                { upsert: true } // Create a new document if no document matches the filter
+            );
+        }
+        console.log('Data successfully updated in the database.');
     } catch (error) {
         console.error(error);
     }
 };
+
 
 const displayCost = async (req, res) => {
     try {
