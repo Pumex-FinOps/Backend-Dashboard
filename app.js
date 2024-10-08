@@ -14,15 +14,17 @@ app.use(cors());
 const multer = require('multer')
 const { applicationSignup, displayTeam, getTeam, deleteTeam, updateTeam } = require("./controller/DB/controller/application_Controller")
 const { resourceCount } = require("./controller/dashboard/resources/resources.controller")
+
 const { getTaggedResources } = require("./controller/dashboard/tagBasedResources/tagreport");
 const { costdetails, customCostDetails } = require("./controller/dashboard/cost/cost.controller")
 const { userSignUp, userLogIn, displayUser, getUser, deleteUsers, updateUser, changePassword, resetPassword } = require("./controller/DB/controller/user_controller")
 const costcontroller = require("./controller/DB/controller/cost_controller")
 const resourceCostConttoller = require("./controller/DB/controller/resourceCost_controller")
+const resourceCountsDetails = require("./controller/DB/controller/resourceCount_controller")
+
 const { getCostOfAllResources } = require('./controller/dashboard/resourseLevelCost/resourcelevelcost.controller');
 const { authenticateToken } = require("./controller/DB/utils/middleware")
 const {initializeAdmin} = require("./controller/DB/utils/adminUtils")
-
 
 const { fileUpload } = require("./controller/DB/utils/file_upload")
 const storage = multer.memoryStorage();
@@ -40,7 +42,7 @@ const upload = multer({ storage: storage });
 // });
 // Initialize default admin 
 initializeAdmin()
-costcontroller.updateAwsCost();
+//costcontroller.updateAwsCost();
 
 
 app.get('/costdetails', costdetails)
@@ -75,6 +77,8 @@ app.get("/costbyresource", resourceCostConttoller.updateResourceLevelCost)
 app.get("/getcostbyresource", resourceCostConttoller.displayResourceLevelCost)
 app.post('/costdetails/custom', customCostDetails)
 
+
+app.get("/updateresourceCounts",resourceCountsDetails.updateresourceCounts)
 
 
 app.post('/teams', authenticateToken, applicationSignup)
